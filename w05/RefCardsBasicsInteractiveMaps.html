@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Interactive Spatial Maps • R Guide & Reference</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f5f7;
+      --bg-card: #ffffff;
+      --text-primary: #1e1e2f;
+      --text-secondary: #3b2c3a;
+      --text-muted: #5e4b5c;
+      --border-subtle: #e0d2db;
+      --accent-purple: #6E3061;
+      --accent-soft: #f2e8f0;
+      --shadow-sm: 0 4px 10px rgba(110, 48, 97, 0.08);
+      --shadow-hover: 0 8px 20px rgba(110, 48, 97, 0.15);
+      --toggle-bg: #eaddf0;
+      --footer-bg: #f3edf2;
+      --table-stripe: #faf6f9;
+      --check-color: #6E3061;
+      --focus-ring: #b284a8;
+    }
+
+    body.dark {
+      --bg-primary: #1f1a1e;
+      --bg-secondary: #2a2128;
+      --bg-card: #2f2630;
+      --text-primary: #f0e6f0;
+      --text-secondary: #d6c5d4;
+      --text-muted: #b9a3b5;
+      --border-subtle: #4e3c4a;
+      --accent-purple: #d9a5c9;
+      --accent-soft: #3e3040;
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-hover: 0 8px 18px rgba(0,0,0,0.5);
+      --toggle-bg: #4d3e4a;
+      --footer-bg: #292129;
+      --table-stripe: #2c222a;
+      --check-color: #d9a5c9;
+      --focus-ring: #c49bba;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', system-ui, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.5;
+      transition: background 0.3s ease, color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* print styles – keeps colors, proper sizing */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      .no-print, .theme-toggle-btn {
+        display: none !important;
+      }
+      header, footer {
+        background: #6E3061 !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .block {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+        background: white !important;
+      }
+      body.dark .block {
+        background: white !important;
+        color: black !important;
+      }
+      @page {
+        size: A3 landscape;
+        margin: 12mm;
+      }
+      /* Letter support via class toggled */
+      .page-letter {
+        size: letter landscape;
+      }
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* header & footer with purple #6E3061 */
+    header {
+      background: #6E3061;
+      color: white;
+      padding: 1.8rem 2rem;
+      text-align: center;
+      border-bottom: 4px solid rgba(255,255,255,0.25);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.3rem;
+    }
+      
+    header h2 {
+      font-size: 2.0rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.3rem;
+    }
+      
+    header .subtitle {
+      font-size: 1.4rem;
+      font-weight: 500;
+      opacity: 0.9;
+      margin-top: 0.2rem;
+    }
+
+    footer {
+      background: #6E3061;
+      color: white;
+      text-align: center;
+      padding: 1.2rem 2rem;
+      margin-top: 2.5rem;
+      font-size: 0.9rem;
+      /*display: flex;*/
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 3px solid rgba(255,255,255,0.2);
+    }
+
+    footer .copyright {
+      opacity: 0.9;
+    }
+
+    footer .sitemeter {
+      font-family: monospace;
+      background: rgba(255,255,255,0.15);
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+    }
+
+    /* controls bar */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin: 1.8rem 0 1.5rem;
+    }
+   .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.2rem;
+            align-items: center;
+        }
+    .theme-toggle-btn {
+     /* background: var(--toggle-bg);  */
+      background: #b284a8; 
+      border: none;
+      border-radius: 3rem;
+      padding: 0.6rem 1.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      /*display: flex;*/
+      align-items: center;
+      gap: 0.4rem;
+      /*background: #6E3061; */
+      color: white;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    body.dark .theme-toggle-btn {
+      background: #b284a8; 
+      color: #1f1a1e;
+    }
+
+    .page-size-selector {
+      display: flex;
+      gap: 0.8rem;
+      align-items: right;
+      background:  #6E3061;
+      /*background: var(--bg-secondary);  */
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      text-align: right;
+    }
+
+    .page-btn {
+      /*background: transparent;  */
+      border: 1px solid var(--border-subtle);
+      padding: 0.4rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 500;
+      cursor: pointer;
+      color: var(--text-primary);
+      background: var(--bg-card);  
+      transition: 0.15s;
+      align-items: right;
+    }
+    .page-btn.active {
+       background: var(--bg-card);  
+      /*background: #6E3061;  */
+      color: white;
+      border-color: #6E3061;
+      font-weight: 600;
+     text-align: right;
+    }
+
+    /* blocks / reference cards layout */
+    .blocks-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2.2rem;
+    }
+
+    .block {
+      background: var(--bg-card);
+      border-radius: 1.8rem;
+      padding: 1.6rem 2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s;
+    }
+
+    .block h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #6E3061;
+      margin-bottom: 1.2rem;
+      border-left: 6px solid #6E3061;
+      padding-left: 1rem;
+    }
+
+    body.dark .block h2 {
+      color: #d9a5c9;
+      border-left-color: #d9a5c9;
+    }
+
+    .cards-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .card {
+      flex: 1 1 260px;
+      background: var(--bg-secondary);
+      border-radius: 1.2rem;
+      padding: 1.3rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      transition: 0.2s;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .card h3 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 0.7rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* interactive checkboxes */
+    .checklist {
+      list-style: none;
+      margin-top: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .checklist input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 1.2rem;
+      height: 1.2rem;
+      border: 2px solid var(--accent-purple);
+      border-radius: 0.3rem;
+      background: white;
+      margin-top: 0.15rem;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: 0.15s;
+    }
+    body.dark .checklist input[type="checkbox"] {
+      background: #2f2630;
+    }
+    .checklist input[type="checkbox"]:checked {
+      background: var(--check-color);
+      border-color: var(--check-color);
+    }
+    .checklist input[type="checkbox"]:checked::after {
+      content: "✓";
+      position: absolute;
+      left: 2px;
+      top: -2px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .checklist label {
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .inline-code {
+      background: var(--accent-soft);
+      padding: 0.1rem 0.4rem;
+      border-radius: 0.3rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+    }
+
+    hr {
+      margin: 1.5rem 0 0.8rem;
+      border: 0.5px solid var(--border-subtle);
+    }
+
+    .legend-note {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 0.7rem;
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 1rem;
+      }
+      header h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body class="light">
+  <header>
+    <h1>STA 553 DATA VISUALIZATION</h1>
+    <h2>🗺️ Interactive Maps for Spatial Information</h2>
+    <div class="subtitle">Map structure · Types · When to use which · Graphical layers · R map libraries</div>
+      <div class="toolbar">
+             <button class="theme-toggle-btn" id="themeToggle" aria-label="Switch dark/light mode">
+        <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+        </div>
+      </div>
+  </header>
+
+  <div class="container">
+    <!-- controls: theme & page size -->
+    <div class="controls no-print">
+
+    <div class="blocks-grid" id="blocksContainer">
+      <!-- BLOCK 1: Map Structure -->
+      <div class="block">
+        <h2>📌 1. Map Structure & Layers</h2>
+        <div class="cards-row">
+          <div class="card">
+            <h3>🧱 Core Layers</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="ch1" checked><label for="ch1">Data Layer (sf, GeoJSON)</label></li>
+              <li><input type="checkbox" id="ch2" checked><label for="ch2">Base Map / Tiles (OSM, CartoDB)</label></li>
+              <li><input type="checkbox" id="ch3"><label for="ch3">Rendering Engine (Leaflet, Mapbox GL)</label></li>
+              <li><input type="checkbox" id="ch4"><label for="ch4">Interactive Overlays (popups, legends)</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>📊 Data Structures</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="ch5" checked><label for="ch5"><span class="inline-code">sf</span> (simple features) – modern vector</label></li>
+              <li><input type="checkbox" id="ch6"><label for="ch6"><span class="inline-code">SpatRaster</span> (terra) – raster</label></li>
+              <li><input type="checkbox" id="ch7"><label for="ch7">Leaflet <span class="inline-code">addTiles()</span> base</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>⚙️ Application Shell</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="ch8"><label for="ch8">Standalone HTML (<span class="inline-code">saveWidget</span>)</label></li>
+              <li><input type="checkbox" id="ch9" checked><label for="ch9">R Markdown / Quarto embed</label></li>
+              <li><input type="checkbox" id="ch10"><label for="ch10">Shiny (<span class="inline-code">renderLeaflet</span>)</label></li>
+            </ul>
+          </div>
+        </div>
+        <div class="legend-note">✅ Checked = commonly used as starting point</div>
+      </div>
+
+      <!-- BLOCK 2: Types of Maps & When to Use -->
+      <div class="block">
+        <h2>🧭 2. Map Types & Decision Guide</h2>
+        <div class="cards-row">
+          <div class="card">
+            <h3>📍 Point / Proportional Symbol</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="t1" checked><label for="t1">Crime incidents, store locations</label></li>
+              <li><input type="checkbox" id="t2"><label for="t2">Earthquake magnitude (size)</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🎨 Choropleth</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="t3" checked><label for="t3">Election results by region</label></li>
+              <li><input type="checkbox" id="t4"><label for="t4">Population density (normalized)</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🔥 Heatmap / Flow</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="t5"><label for="t5">Accident hotspots (density)</label></li>
+              <li><input type="checkbox" id="t6"><label for="t6">Migration flow lines</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🌀 Cartogram / Bivariate</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="t7"><label for="t7">Electoral votes distortion</label></li>
+              <li><input type="checkbox" id="t8"><label for="t8">Income vs education (two variables)</label></li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+        <div style="font-weight:500; color:var(--text-secondary);">💡 Always prefer normalized rates for choropleth. Use heatmaps for point density.</div>
+      </div>
+
+      <!-- BLOCK 3: Adding Graphical Information -->
+      <div class="block">
+        <h2>✨ 3. Graphical & Interactive Overlays</h2>
+        <div class="cards-row">
+          <div class="card">
+            <h3>💬 Popups & Tooltips</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="g1" checked><label for="g1">Rich HTML popups (tables, SVG)</label></li>
+              <li><input type="checkbox" id="g2"><label for="g2">Hover tooltips (<span class="inline-code">label</span>)</label></li>
+              <li><input type="checkbox" id="g3"><label for="g3">Click markers with images</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🎛️ Visual Encodings</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="g4" checked><label for="g4">Radius ~ value (proportional)</label></li>
+              <li><input type="checkbox" id="g5"><label for="g5">Opacity for uncertainty</label></li>
+              <li><input type="checkbox" id="g6"><label for="g6">Cluster markers (many points)</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🧩 Interactivity Hooks</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="g7" checked><label for="g7">Layer control (toggle overlays)</label></li>
+              <li><input type="checkbox" id="g8"><label for="g8"><span class="inline-code">leafletProxy()</span> in Shiny</label></li>
+              <li><input type="checkbox" id="g9"><label for="g9">Custom icons & minimap</label></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCK 4: Key R Libraries Reference Cards -->
+      <div class="block">
+        <h2>📦 4. Key R Map Libraries</h2>
+        <div class="cards-row">
+          <div class="card">
+            <h3>🍃 leaflet</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="lib1" checked><label for="lib1">90% of interactive maps</label></li>
+              <li><input type="checkbox" id="lib2"><label for="lib2">Markers, polygons, raster</label></li>
+              <li><input type="checkbox" id="lib3"><label for="lib3">Shiny integration (proxy)</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>👁️ mapview</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="lib4"><label for="lib4">Rapid exploration (<span class="inline-code">mapview(obj)</span>)</label></li>
+              <li><input type="checkbox" id="lib5"><label for="lib5">One-liner feature-rich maps</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🎯 tmap (v4)</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="lib6"><label for="lib6">Thematic maps, static+interactive</label></li>
+              <li><input type="checkbox" id="lib7"><label for="lib7">Grammar of graphics style</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🚀 mapdeck</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="lib8"><label for="lib8">WebGL 100k+ points</label></li>
+              <li><input type="checkbox" id="lib9"><label for="lib9">3D extrusions, arcs (token needed)</label></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>📈 ggiraph / highcharter</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" id="lib10"><label for="lib10">ggplot2 interactive tooltips</label></li>
+              <li><input type="checkbox" id="lib11"><label for="lib11">Highcharts choropleth</label></li>
+            </ul>
+          </div>
+        </div>
+        <div class="legend-note">⭐ Start with leaflet + sf; upgrade to mapdeck for large datasets.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+        <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+ 
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+    
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+        
+    <script>
+         // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();   
+    
+    (function() {
+      // ---------- DARK/LIGHT TOGGLE ----------
+      const body = document.body;
+      const toggleBtn = document.getElementById('themeToggle');
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+
+      function updateThemeUI(isDark) {
+        if (isDark) {
+          body.classList.add('dark');
+          body.classList.remove('light');
+          themeIcon.textContent = '☀️';
+          themeText.textContent = 'Light Mode';
+        } else {
+          body.classList.remove('dark');
+          body.classList.add('light');
+          themeIcon.textContent = '🌙';
+          themeText.textContent = 'Dark Mode';
+        }
+      }
+
+      // check saved preference or system
+      const savedTheme = localStorage.getItem('spatialMapTheme');
+      if (savedTheme === 'dark') {
+        updateThemeUI(true);
+      } else if (savedTheme === 'light') {
+        updateThemeUI(false);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        updateThemeUI(true);
+      } else {
+        updateThemeUI(false);
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        const isDarkNow = body.classList.contains('dark');
+        updateThemeUI(!isDarkNow);
+        localStorage.setItem('spatialMapTheme', !isDarkNow ? 'dark' : 'light');
+      });
+
+      // ---------- PAGE SIZE SELECTOR (A3 / Letter) ----------
+      const btnA3 = document.getElementById('btnA3');
+      const btnLetter = document.getElementById('btnLetter');
+
+      function setActivePageButton(size) {
+        if (size === 'letter') {
+          btnA3.classList.remove('active');
+          btnLetter.classList.add('active');
+          body.classList.add('page-letter');
+        } else {
+          btnLetter.classList.remove('active');
+          btnA3.classList.add('active');
+          body.classList.remove('page-letter');
+        }
+      }
+
+      // default A3 active
+      setActivePageButton('a3');
+
+      btnA3.addEventListener('click', () => setActivePageButton('a3'));
+      btnLetter.addEventListener('click', () => setActivePageButton('letter'));
+
+      // ---------- CHECKBOX INTERACTIVITY (all work natively) ----------
+      // All checkboxes are functional; we can also store their state if desired.
+      const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+      
+      // Load saved checkbox states from localStorage (optional persistence)
+      function loadCheckboxStates() {
+        allCheckboxes.forEach((cb) => {
+          const key = `check_${cb.id}`;
+          const saved = localStorage.getItem(key);
+          if (saved !== null) {
+            cb.checked = saved === 'true';
+          }
+        });
+      }
+
+      function saveCheckboxState(checkbox) {
+        if (checkbox.id) {
+          localStorage.setItem(`check_${checkbox.id}`, checkbox.checked);
+        }
+      }
+
+      allCheckboxes.forEach(cb => {
+        cb.addEventListener('change', (e) => {
+          saveCheckboxState(e.target);
+        });
+      });
+
+      // initial load of checkbox states
+      loadCheckboxStates();
+
+      // ---------- PRINT handling (already uses CSS media, but we can hint) ----------
+      window.addEventListener('beforeprint', () => {
+        // ensure letter class is respected
+      });
+
+      console.log('✅ Interactive spatial map reference ready. Dark mode, A3/Letter, checkboxes active.');
+    })();
+  </script>
+</body>
+</html>

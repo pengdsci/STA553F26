@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Geospatial Modeling & Visualization · Reference Cards</title>
+  <!-- MathJax for formula rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        ignoreHtmlClass: 'no-mathjax',
+        processHtmlClass: 'mathjax-process'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* CORE COLOR: purple #6E3061 with accessibility contrast */
+    body {
+      background-color: #512d6d;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+      transition: background-color 0.25s ease, color 0.2s ease;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+
+    .header {
+      background: #6E3061;
+      padding: 1.0rem 1.0rem;
+      color: white;
+      border-bottom: 4px solid #ffd966;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .header h2 {
+      font-size: 2.0rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .header .subtitle {
+      font-size: 1.35rem;
+      opacity: 0.92;
+      font-weight: 500;
+      border-left: 3px solid #ffd966;
+      padding-left: 1rem;
+      margin-top: 0.25rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding: 0.9rem 2rem;
+      background: #f9f4f7;
+      border-bottom: 1px solid #e2d0dc;
+      align-items: center;
+    }
+
+    .btn {
+      background: white;
+      border: 1px solid #c2a8bd;
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #2d2a2c;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .btn:hover {
+      background: #e9dce5;
+      border-color: #6E3061;
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: #6E3061;
+      border-color: #4f2444;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #4f2444;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem;
+      padding: 2rem 2rem;
+    }
+
+    @media (max-width: 760px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      body {
+        padding: 1rem;
+      }
+    }
+
+    .card {
+      background: #fefcff;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px #6E3061;
+      transition: all 0.2s;
+      border: 1px solid #ecdde6;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .card-header {
+      background: #6E3061;
+      padding: 1rem 1.4rem;
+      border-bottom: 2px solid #dbbdce;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .card-header span {
+      background: #6E306110;
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      font-size: 1.1rem;
+      font-weight: normal;
+      font-family: monospace;
+    }
+    .card-body {
+      padding: 1.3rem 1.4rem 1.6rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .card-description {
+      font-size: 0.9rem;
+      color: #5a4a55;
+      margin-bottom: 1rem;
+      padding: 0.6rem 0.8rem;
+      background: #fdf5f9;
+      border-radius: 12px;
+      border-left: 3px solid #ffd966;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .formula-block {
+      background: #f5f0f3;
+      padding: 0.9rem;
+      border-radius: 18px;
+      margin: 0.8rem 0;
+      font-size: 1rem;
+      overflow-x: auto;
+      text-align: center;
+    }
+    .r-code {
+      background: #1a1a2e;
+      color: #e0e0ff;
+      padding: 0.8rem;
+      border-radius: 14px;
+      font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
+      font-size: 0.8rem;
+      margin: 0.5rem 0;
+      border-left: 4px solid #ffd966;
+      white-space: pre-wrap;
+      text-align: left;
+      line-height: 1.6;
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      margin-top: 1rem;
+      gap: 0.7rem;
+      border-top: 1px dashed #e2d0dc;
+      padding-top: 0.8rem;
+      font-size: 0.85rem;
+    }
+    .check-row input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #6E3061;
+      transform: scale(1);
+    }
+    .badge {
+      background: #e2d0dc;
+      border-radius: 30px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+    footer {
+      background: #f3eaf0;
+      padding: 1.2rem 2rem;
+      font-size: 0.8rem;
+      color: #3f2d38;
+      border-top: 1px solid #e1cfda;
+      /*display: flex; */
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .site-meter {
+      font-family: monospace;
+    }
+
+    /* Dark mode overrides */
+    body.dark {
+      background-color: #2c1a27;
+    }
+    body.dark .container {
+      background: #1f1a1d;
+    }
+    body.dark .card {
+      background: #2b2428;
+      border-color: #4d3a44;
+    }
+    body.dark .card-header {
+      background: #6E3061;
+      color: white;
+      border-bottom-color: #6E3061;
+    }
+    body.dark .card-body {
+      color: #efeaed;
+    }
+    body.dark .card-description {
+      background: #3a2e35;
+      color: #d4c5cf;
+      border-left-color: #ffd966;
+    }
+    body.dark .formula-block {
+      background: #3a2e35;
+      color: #f3e6ef;
+    }
+    body.dark .r-code {
+      background: #0d0d1a;
+      color: #d0d0ff;
+      border-left-color: #ffd966;
+    }
+    body.dark .toolbar {
+      background: #2a2126;
+      border-bottom-color: #4b3942;
+    }
+    body.dark .btn {
+      background: #3f2f37;
+      border-color: #6E3061;
+      color: #f0e3ea;
+    }
+    body.dark .btn-primary {
+      background: #6E3061;
+      color: white;
+    }
+    body.dark footer {
+      background: #2c2228;
+      color: #cfc1ca;
+      border-top-color: #4a3842;
+    }
+    body.dark .badge {
+      background: #4a3842;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      body.dark .container, .container {
+        background: white;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .toolbar {
+        display: none;
+      }
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem;
+      }
+      .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+      .check-row input {
+        opacity: 1;
+        border: 1px solid black;
+      }
+      footer {
+        background: #f5f5f5;
+        color: black;
+      }
+      .btn, .toolbar .btn {
+        display: none;
+      }
+      body.dark .card-header, body.dark .card-body {
+        color: black;
+        background: #fff;
+      }
+      .r-code {
+        background: #2d2d2d !important;
+        color: #f0f0f0 !important;
+        border: 1px solid #555;
+      }
+      body.dark .r-code {
+        background: #2d2d2d !important;
+        color: #f0f0f0 !important;
+      }
+      .formula-block {
+        background: #f7f7f7;
+      }
+      @page {
+        size: A3;
+      }
+      @page letter {
+        size: letter;
+      }
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+    @media print and (max-width: 760px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>STA 553 Data Visualization</h1>
+    <h2>🌍 Geospatial Modeling & Visualization</h2>
+    <div class="subtitle">Key Points & Formulas: How to use geo-spatial information effectively</div>
+  </div>
+
+  <!-- Toolbar with dark/light toggle -->
+  <div class="toolbar">
+    <button class="btn" id="darkToggle" title="Toggle dark/light mode">🌓 Dark/Light</button>
+    <!--span class="badge" style="margin-right:auto;">✓ clickable checkboxes</span>
+    span class="badge">A3 / Letter print ready</span-->
+  </div>
+
+  <!-- CARDS GRID : 2 cards per row -->
+  <div class="cards-grid" id="cardsGrid">
+    <!-- CARD 1: Coordinate Basics & Haversine -->
+    <div class="card">
+      <div class="card-header">🌐 Coordinate basics <span>WGS84</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          📍 Just like a global address system, latitude and longitude pinpoints any location on Earth. Think of latitude as the horizontal lines measuring north-south position, and longitude as vertical lines measuring east-west. Together they create a precise grid covering our spherical planet.
+        </div>
+        <div class="formula-block">
+          $$\text{Latitude} \in [-90^\circ, 90^\circ],\ \text{Longitude} \in [-180^\circ, 180^\circ]$$
+        </div>
+        <div class="formula-block">
+          $$\text{Haversine: } a = \sin^2(\Delta\phi/2) + \cos\phi_1\cos\phi_2\sin^2(\Delta\lambda/2)$$
+          $$c = 2\arctan2(\sqrt{a}, \sqrt{1-a}),\ d = R \cdot c$$
+        </div>
+        <div class="r-code">
+          # R: geosphere package<br>
+          geosphere::distHaversine(c(lon1, lat1), c(lon2, lat2))
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card1_check"> <label for="card1_check">validate coordinates (lat/lon range)</label>
+        </div>
+        <div class="badge" style="margin-top:0.4rem;">sf::st_crs(4326)</div>
+      </div>
+    </div>
+
+    <!-- CARD 2: Projections & CRS -->
+    <div class="card">
+      <div class="card-header">🗺️ Projections & CRS <span>EPSG</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🗺️ Imagine trying to flatten an orange peel onto a table—that's essentially what map projections do! Since Earth is round but maps are flat, we need mathematical transformations (projections) to display our 3D world in 2D without distorting distances, areas, or shapes too much.
+        </div>
+        <div class="formula-block">
+          $$\text{EPSG:4326 (WGS84) → EPSG:3857 (Web Mercator)}$$
+          $$\text{Local UTM for accurate distances}$$
+        </div>
+        <div class="r-code">
+          # R: sf + rgdal<br>
+          sf::st_transform(data, crs = 32633)  # UTM zone 33N
+        </div>
+        <div class="r-code">
+          # Choose projection based on region<br>
+          sf::st_crs(data) <- 4326
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card2_check"> <label for="card2_check">project data before distance/area calc</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3: Spatial autocorrelation (Moran's I) -->
+    <div class="card">
+      <div class="card-header">📊 Spatial autocorrelation <span>Moran's I</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🔍 "Everything is related to everything else, but near things are more related than distant things." This famous geographic principle underlies spatial autocorrelation. Moran's I measures whether similar values cluster together in space—like finding that wealthy neighborhoods tend to be adjacent to other wealthy areas.
+        </div>
+        <div class="formula-block">
+          $$I = \frac{n}{S_0} \frac{\sum_i\sum_j w_{ij}(x_i - \bar{x})(x_j - \bar{x})}{\sum_i (x_i - \bar{x})^2}$$
+          $$S_0 = \sum_i\sum_j w_{ij}$$
+        </div>
+        <div class="r-code">
+          # spdep package<br>
+          nb <- spdep::knearneigh(coords, k=5)<br>
+          listw <- spdep::nb2listw(nb)<br>
+          spdep::moran.test(variable, listw)
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card3_check"> <label for="card3_check">check residual autocorrelation</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4: Kriging / Gaussian Process -->
+    <div class="card">
+      <div class="card-header">🌊 Kriging & Gaussian Process <span>variogram</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          💎 Named after South African mining engineer Danie Krige, this elegant technique predicts values at unmeasured locations by learning how spatial correlation decays with distance. It's like filling in missing puzzle pieces by understanding the pattern of pieces you already have. Widely used in geology, environmental science, and meteorology.
+        </div>
+        <div class="formula-block">
+          $$\gamma(h) = \frac{1}{2|N(h)|}\sum_{N(h)}(z(u_i)-z(u_j))^2$$
+          $$\text{Model: spherical, exponential, Matérn}$$
+        </div>
+        <div class="r-code">
+          # gstat package<br>
+          v <- variogram(z ~ 1, locations = data)<br>
+          vm <- fit.variogram(v, model = vgm("Sph"))
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card4_check"> <label for="card4_check">fit variogram & krige prediction</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 5: GWR (Geographically Weighted Regression) -->
+    <div class="card">
+      <div class="card-header">📍 GWR <span>local model</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🏘️ Not all relationships are the same everywhere! What influences housing prices in downtown Manhattan might differ from suburban Arizona. Geographically Weighted Regression lets coefficients vary across space, revealing how relationships between variables change from neighborhood to neighborhood—like having a unique regression model for every location.
+        </div>
+        <div class="formula-block">
+          $$y_i = \beta_0(u_i,v_i) + \sum_k \beta_k(u_i,v_i) x_{ik} + \epsilon_i$$
+          $$\hat{\beta}(u_i,v_i) = (X^T W(u_i,v_i) X)^{-1} X^T W(u_i,v_i) y$$
+        </div>
+        <div class="r-code">
+          # spgwr / GWmodel<br>
+          library(GWmodel)<br>
+          bw <- bw.gwr(y ~ x1 + x2, data = spdf)<br>
+          gwr.model <- gwr.basic(y ~ x1 + x2, data = spdf, bw = bw)
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card5_check"> <label for="card5_check">map coefficient surfaces</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 6: Spatial regression (SAR/CAR) -->
+    <div class="card">
+      <div class="card-header">🔗 Spatial autoregressive <span>SAR</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🤝 Neighbors influence each other—this is the core idea behind spatial autoregressive models. Whether it's housing prices affected by nearby sales or disease spread between adjacent regions, SAR models explicitly account for spatial spillover effects. Think of it as regression that acknowledges you're influenced by those around you.
+        </div>
+        <div class="formula-block">
+          $$y = \rho W y + X\beta + \epsilon \quad \text{(spatial lag)}$$
+          $$y = X\beta + \lambda W u + \epsilon \quad \text{(spatial error)}$$
+        </div>
+        <div class="r-code">
+          # spatialreg<br>
+          library(spatialreg)<br>
+          lagsarlm(y ~ x1, data = spdf, listw = listw)
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card6_check"> <label for="card6_check">define spatial weights matrix</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 7: Spatial clustering (DBSCAN) -->
+    <div class="card">
+      <div class="card-header">🧩 Spatial clustering <span>DBSCAN</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🐦 Birds of a feather flock together—and so do many spatial phenomena! DBSCAN finds clusters of points based on density, automatically identifying hotspots like crime concentrations, disease outbreaks, or popular gathering places. Unlike simpler methods, it can discover clusters of any shape and filter out noise.
+        </div>
+        <div class="formula-block">
+          $$\text{Core: } |N_\epsilon(p)| \ge \text{minPts}$$
+          $$\text{Haversine metric for lat/lon}$$
+        </div>
+        <div class="r-code">
+          # dbscan package<br>
+          library(dbscan)<br>
+          clusters <- dbscan(coords, eps = 0.5, minPts = 10)
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card7_check"> <label for="card7_check">tune eps & minPts for spatial density</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 8: Density maps & heatmaps -->
+    <div class="card">
+      <div class="card-header">🔥 Density / heatmaps <span>KDE</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🌡️ Heatmaps transform scattered points into smooth, colorful surfaces showing where events concentrate. Like a thermal camera for data, Kernel Density Estimation creates a continuous "heat" surface from discrete observations—perfect for visualizing crime hotspots, wildlife sightings, or customer density across a city.
+        </div>
+        <div class="formula-block">
+          $$\hat{f}(x) = \frac{1}{n h^2} \sum_{i=1}^n K\left(\frac{||x - X_i||}{h}\right)$$
+        </div>
+        <div class="r-code">
+          # MASS + raster<br>
+          kde <- MASS::kde2d(lon, lat, n = 100)<br>
+          image(kde)
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card8_check"> <label for="card8_check">choose bandwidth & projection</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 9: Interactive maps (leaflet) -->
+    <div class="card">
+      <div class="card-header">🖱️ Interactive viz <span>leaflet</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🖱️ Static maps tell stories, but interactive maps let users explore their own stories! With tools like Leaflet, you can zoom into neighborhoods, click on points for details, and toggle layers on and off. It's the difference between looking at a printed atlas versus using Google Maps—dynamic, responsive, and personal.
+        </div>
+        <div class="formula-block">
+          $$\text{map} = \text{leaflet}() \to \text{addTiles}() \to \text{addMarkers}(...)$$
+        </div>
+        <div class="r-code">
+          library(leaflet)<br>
+          leaflet(data) %>% addTiles() %>%<br>
+          addCircleMarkers(lng = ~lon, lat = ~lat, popup = ~name)
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card9_check"> <label for="card9_check">add popups & clustering</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 10: Spatial cross-validation -->
+    <div class="card">
+      <div class="card-header">✅ Spatial CV <span>block split</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🎯 Traditional random train-test splits can be misleading with spatial data—it's like testing a student on material they've already seen because nearby locations are too similar. Spatial cross-validation creates geographically separated blocks, ensuring your model truly learns patterns rather than memorizing locations. This prevents overly optimistic performance estimates.
+        </div>
+        <div class="formula-block">
+          $$\text{Partition into spatial blocks } B_1, \dots, B_k$$
+          $$\text{Train on } \cup_{j \neq i} B_j,\ \text{test on } B_i$$
+        </div>
+        <div class="r-code">
+          # blockCV package<br>
+          library(blockCV)<br>
+          sb <- spatialBlock(speciesData, k = 5, selection = "random")
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card10_check"> <label for="card10_check">avoid random splitting for spatial data</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 11: Choropleth & aggregation -->
+    <div class="card">
+      <div class="card-header">🗺️ Choropleth maps <span>sf & tmap</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🎨 Choropleth maps color regions based on data values—like election results by county or income by ZIP code. By aggregating individual points into meaningful areas, we reveal geographic patterns that might be invisible at the point level. It's the classic technique for showing how statistics vary across administrative or natural boundaries.
+        </div>
+        <div class="formula-block">
+          $$\text{aggregate points } \to \text{polygons (ZCTA, counties)}$$
+          $$\text{map } \bar{y}_j \text{ per region}$$
+        </div>
+        <div class="r-code">
+          library(sf); library(tmap)<br>
+          tm_shape(polygons) + tm_polygons(col = "avg_value")
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card11_check"> <label for="card11_check">join spatial polygons with aggregated stats</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 12: Spatio-temporal models -->
+    <div class="card">
+      <div class="card-header">⏳ Spatio-temporal <span>INLA / spacetime</span></div>
+      <div class="card-body">
+        <div class="card-description">
+          🕰️ The world changes over time, and space-time models capture this evolution. Whether tracking air pollution drifting across cities, monitoring disease spread through seasons, or analyzing traffic patterns throughout the day, spatio-temporal models unite geography with chronology. They reveal not just where things happen, but when and how patterns shift.
+        </div>
+        <div class="formula-block">
+          $$y(s,t) = \mu + Z(s,t) + \epsilon_{st}$$
+          $$\text{Cov}(Z(s_1,t_1), Z(s_2,t_2)) = \sigma^2 \rho(h,\tau)$$
+        </div>
+        <div class="r-code">
+          # R-INLA, gstat spacetime<br>
+          library(INLA)<br>
+          inla(y ~ 1 + f(location, model="spde"), data = ...)
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="card12_check"> <label for="card12_check">define spatial mesh & temporal index</label>
+        </div>
+      </div>
+    </div>
+  </div> <!-- end cards-grid -->
+
+  <!-- Footer with copyright and site meter -->
+  <footer>
+       <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+ 
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+    
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+ 
+    <script>
+         // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();  
+ 
+  (function() {
+    const body = document.body;
+    const toggleBtn = document.getElementById('darkToggle');
+    
+    const savedTheme = localStorage.getItem('geospatialTheme');
+    if (savedTheme === 'dark') {
+      body.classList.add('dark');
+    } else {
+      body.classList.remove('dark');
+    }
+
+    toggleBtn.addEventListener('click', function() {
+      body.classList.toggle('dark');
+      const current = body.classList.contains('dark') ? 'dark' : 'light';
+      localStorage.setItem('geospatialTheme', current);
+    });
+
+    console.log('Reference cards ready. Toggle dark/light, print to PDF (A3/Letter).');
+  })();
+</script>
+</body>
+</html>

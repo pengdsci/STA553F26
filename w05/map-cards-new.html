@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Geospatial Analysis • Reference Cards</title>
+  <!-- MathJax for formula rendering -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] },
+      svg: { fontCache: 'global' },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+  </script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* CORE COLOR: purple #6E3061 with accessibility contrast */
+    body {
+      background-color: #512d6d;     /*  #6E3061;  */
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      padding: 2rem 1.5rem;
+      transition: background-color 0.25s ease, color 0.2s ease;
+    }
+
+    /* main container – printable, max-width for readability */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 28px;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+
+    /* header area with purple brand */
+    .header {
+      background: #6E3061;
+      padding: 1.0rem 1.0rem;
+      color: white;
+      border-bottom: 4px solid #ffd966;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .header h2 {
+      font-size: 2.0rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      margin-bottom: 0.5rem;
+    }
+
+    .header .subtitle {
+      font-size: 1.35rem;
+      opacity: 0.92;
+      font-weight: 500;
+      border-left: 3px solid #ffd966;
+      padding-left: 1rem;
+      margin-top: 0.25rem;
+    }
+
+    /* toolbar: toggle + print + size hints */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 1rem;
+      padding: 0.9rem 2rem;
+      background: #f9f4f7;
+      border-bottom: 1px solid #e2d0dc;
+      align-items: center;
+    }
+
+    .btn {
+      background: white;
+      border: 1px solid #c2a8bd;
+      padding: 0.5rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #2d2a2c;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .btn:hover {
+      background: #e9dce5;
+      border-color: #6E3061;
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: #6E3061;
+      border-color: #4f2444;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #4f2444;
+    }
+
+    /* CARDS GRID: two per row on desktop, responsive */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.8rem;
+      padding: 2rem 2rem;
+    }
+
+    /* responsive: on narrow screens, single column */
+    @media (max-width: 760px) {
+      .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      body {
+        padding: 1rem;
+      }
+    }
+
+    /* reference card style */
+    .card {
+      background: #fefcff;
+      border-radius: 24px;
+      box-shadow: 0 8px 20px #6E3061;
+      transition: all 0.2s;
+      border: 1px solid #ecdde6;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .card-header {
+      background: #6E3061;
+      padding: 1rem 1.4rem;
+      border-bottom: 2px solid #dbbdce;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .card-header span {
+      background: #6E306110;
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      font-size: 1.1rem;
+      font-weight: normal;
+      font-family: monospace;
+    }
+    .card-body {
+      padding: 1.3rem 1.4rem 1.6rem;
+      flex: 1;
+    }
+    .formula-block {
+      background: #f5f0f3;
+      padding: 0.9rem;
+      border-radius: 18px;
+      margin: 0.8rem 0;
+      font-size: 1rem;
+      overflow-x: auto;
+      text-align: center;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      margin-top: 1rem;
+      gap: 0.7rem;
+      border-top: 1px dashed #e2d0dc;
+      padding-top: 0.8rem;
+      font-size: 0.85rem;
+    }
+    .check-row input {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #6E3061;
+    }
+    .badge {
+      background: #e2d0dc;
+      border-radius: 30px;
+      padding: 0.2rem 0.7rem;
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+    footer {
+      background: #f3eaf0;
+      padding: 1.2rem 2rem;
+      font-size: 0.8rem;
+      color: #3f2d38;
+      border-top: 1px solid #e1cfda;
+      /*display: flex; */
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* Dark mode overrides */
+    body.dark {
+      background-color: #2c1a27;
+    }
+    body.dark .container {
+      background: #1f1a1d;
+    }
+    body.dark .card {
+      background: #2b2428;
+      border-color: #4d3a44;
+    }
+    body.dark .card-header {
+      background: #6E3061;
+      color: white;
+      border-bottom-color: #6E3061;
+    }
+    body.dark .card-body {
+      color: #efeaed;
+    }
+    body.dark .formula-block {
+      background: #3a2e35;
+      color: #f3e6ef;
+    }
+    body.dark .r-code {
+      background: #0e181c;
+      color: #bbd4f0;
+      border-left: 4px solid #ffd966;
+    }
+    body.dark .toolbar {
+      background: #2a2126;
+      border-bottom-color: #4b3942;
+    }
+    body.dark .btn {
+      background: #3f2f37;
+      border-color: #6E3061;
+      color: #f0e3ea;
+    }
+    body.dark .btn-primary {
+      background: #6E3061;
+      color: white;
+    }
+    body.dark footer {
+      background: #2c2228;
+      color: #cfc1ca;
+      border-top-color: #4a3842;
+    }
+    body.dark .badge {
+      background: #4a3842;
+    }
+
+    /* print styles: A3 & Letter support */
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      body.dark .container, .container {
+        background: white;
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .toolbar {
+        display: none;
+      }
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem;
+      }
+      .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+      .check-row input {
+        opacity: 1;
+        border: 1px solid black;
+      }
+      footer {
+        background: #f5f5f5;
+        color: black;
+      }
+      .btn, .toolbar .btn {
+        display: none;
+      }
+      body.dark .card-header, body.dark .card-body {
+        color: black;
+        background: #fff;
+      }
+      body.dark .r-code {
+        background: #2d2d2d;
+        color: #f0f0f0;
+        border-left: 4px solid #6E3061;
+      }
+      .formula-block {
+        background: #f7f7f7;
+      }
+      @page {
+        size: A3;
+      }
+      @page letter {
+        size: letter;
+      }
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+    @media print and (max-width: 760px) {
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+    .site-meter {
+      font-family: monospace;
+    }
+    /* UPDATED CODE BLOCK STYLE: dark background by default */
+    .r-code {
+      background: #1e1e2f;        /* deep dark indigo */
+      color: #e0e0f0;
+      padding: 0.9rem;
+      border-radius: 14px;
+      font-family: 'Fira Code', 'Cascadia Code', 'Courier New', monospace;
+      font-size: 0.9rem;
+      margin: 0.7rem 0;
+      white-space: pre-wrap;
+      text-align: left;
+      border-left: 4px solid #ffd966;
+      line-height: 1.5;
+      letter-spacing: 0.2px;
+    }
+    /* light mode override for code block remains dark for consistency */
+    body:not(.dark) .r-code {
+      background: #1e1e2f;
+      color: #e0e0f0;
+      border-left: 4px solid #ffd966;
+    }
+    /* ensure dark mode code block also uses same dark theme */
+    body.dark .r-code {
+      background: #0d1117;
+      color: #c9d1d9;
+      border-left: 4px solid #ffd966;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- HEADER -->
+  <div class="header">
+    <h1> STA 553 Data Visualization</h1>
+    <h2>🗺️ Maps · Geocodes · Modeling</h2>
+    <div class="subtitle">Overview Reference Careds: Spatial patterns, feature engineering & visual representation</div>
+  </div>
+
+  <!-- TOOLBAR: dark/light, print, page size indicators -->
+  <div class="toolbar">
+    <!--span style="flex:1; font-weight:500; color:#3b2a34;">📋 Review cards · 2 per row (12 cards)</span-->
+    <button class="btn" id="darkToggle" title="Switch dark/light mode">🌓 Dark / Light</button>
+    <button class="btn btn-primary" id="printButton" title="Print or save as PDF">🖨️ Print (PDF)</button>
+    <!--span class="badge">A3 / Letter ready</span-->
+  </div>
+
+  <!-- CARDS GRID -->
+  <div class="cards-grid" id="cardsGrid">
+    <!-- CARD 1: Spatial Patterns -->
+    <div class="card">
+      <div class="card-header">🔍 Spatial Patterns <span>1/12</span></div>
+      <div class="card-body">
+        <p><strong>Reveal invisible clusters.</strong> Geocoded points show relationships hidden in tables.</p>
+        <div class="formula-block">
+          $$\text{Pattern} = f(\text{location density})$$
+        </div>
+        <div class="r-code">
+# Kernel density estimation (points)
+library(sf); library(ggplot2)
+ggplot(data = points_sf) +
+  stat_density_2d(aes(x = st_coordinates(geometry)[,1],
+                      y = st_coordinates(geometry)[,2],
+                      fill = after_stat(level)),
+                  geom = "polygon")</div>
+        <div class="check-row">
+          <input type="checkbox" id="card1" checked><label for="card1">✅ Understand point density</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2: Proximity & Containment -->
+    <div class="card">
+      <div class="card-header">📏 Proximity / Containment <span>2/12</span></div>
+      <div class="card-body">
+        <p><strong>Distance & polygon queries.</strong> Answers "how close" and "inside which area".</p>
+        <div class="formula-block">
+          $$d(i,j) = \sqrt{ (x_i - x_j)^2 + (y_i - y_j)^2 }$$
+        </div>
+        <div class="r-code">
+# Distance matrix & point-in-polygon
+library(sf)
+st_distance(customers, stores)  # great circle if CRS=4326
+st_join(points, polygons, join = st_within)</div>
+        <div class="check-row">
+          <input type="checkbox" id="card2"><label for="card2">📐 Buffer & containment tested</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3: Spatial Autocorrelation -->
+    <div class="card">
+      <div class="card-header">🧲 Spatial Autocorrelation <span>3/12</span></div>
+      <div class="card-body">
+        <p><strong>Moran's I & LISA.</strong> "Near things are more related than distant things."</p>
+        <div class="formula-block">
+          $$I = \frac{N}{W} \frac{\sum_i\sum_j w_{ij}(x_i-\bar{x})(x_j-\bar{x})}{\sum_i (x_i-\bar{x})^2}$$
+        </div>
+        <div class="r-code">
+library(spdep)
+nb <- poly2nb(polygons, queen=TRUE)
+lw <- nb2listw(nb, style="W")
+moran.test(polygons$value, lw)
+localmoran(polygons$value, lw)</div>
+        <div class="check-row">
+          <input type="checkbox" id="card3"><label for="card3">📊 Moran test completed</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4: Feature Engineering -->
+    <div class="card">
+      <div class="card-header">🧠 Feature Engineering <span>4/12</span></div>
+      <div class="card-body">
+        <p><strong>Geocode → predictors.</strong> Distance to highway, population density, competitor count.</p>
+        <div class="formula-block">
+          $$\text{Feature}_{new} = g(\text{lat},\text{lon}, \text{external layers})$$
+        </div>
+        <div class="r-code">
+# Extract raster value at points
+library(raster); library(sf)
+pop_density <- extract(pop_raster, points_sf)
+points_sf$dist_road <- 
+  st_distance(points_sf, major_roads) |> apply(1, min)</div>
+        <div class="check-row">
+          <input type="checkbox" id="card4" checked><label for="card4">⚡ New spatial features added</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 5: Spatial Clustering (DBSCAN) -->
+    <div class="card">
+      <div class="card-header">🧩 DBSCAN Clustering <span>5/12</span></div>
+      <div class="card-body">
+        <p><strong>Density-based spatial clustering.</strong> Finds clusters of arbitrary shape, marks noise.</p>
+        <div class="formula-block">
+          $$\text{Core point if } |N_{\epsilon}(p)| \ge \text{minPts}$$
+        </div>
+        <div class="r-code">
+library(dbscan)
+cl <- dbscan(st_coordinates(points_sf), 
+             eps = 0.008, minPts = 10)
+points_sf$cluster <- cl$cluster</div>
+        <div class="check-row">
+          <input type="checkbox" id="card5"><label for="card5">🔘 DBSCAN run</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 6: Spatial Regression -->
+    <div class="card">
+      <div class="card-header">📈 Spatial Regression <span>6/12</span></div>
+      <div class="card-body">
+        <p><strong>Fix spatial dependence.</strong> Spatial lag or error model when OLS fails.</p>
+        <div class="formula-block">
+          $$y = \rho W y + X\beta + \epsilon \quad \text{(Spatial Lag)}$$
+        </div>
+        <div class="r-code">
+library(spatialreg)
+lagsarlm(price ~ income + dist, 
+         data = df, listw = lw, 
+         method = "eigen")</div>
+        <div class="check-row">
+          <input type="checkbox" id="card6"><label for="card6">📉 Spatial model fitted</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 7: Choropleth & Normalization -->
+    <div class="card">
+      <div class="card-header">🎨 Choropleth Maps <span>7/12</span></div>
+      <div class="card-body">
+        <p><strong>Normalize wisely.</strong> Map rates (per capita, per area), not raw totals.</p>
+        <div class="formula-block">
+          $$\text{Rate} = \frac{\text{Event count}}{\text{Population}} \times 1000$$
+        </div>
+        <div class="r-code">
+library(tmap)
+tm_shape(counties) +
+  tm_polygons(col = "crime_rate", 
+              style = "jenks", 
+              palette = "Purples")</div>
+        <div class="check-row">
+          <input type="checkbox" id="card7" checked><label for="card7">🗺️ Rate mapped</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 8: Heatmaps & Interpolation -->
+    <div class="card">
+      <div class="card-header">🔥 Heatmap / Kriging <span>8/12</span></div>
+      <div class="card-body">
+        <p><strong>Continuous surfaces from points.</strong> IDW, Kriging for prediction.</p>
+        <div class="formula-block">
+          $$\hat{z}(s_0) = \sum_{i=1}^{N} \lambda_i z(s_i)$$
+        </div>
+        <div class="r-code">
+library(gstat)
+idw.out <- idw(value ~ 1, 
+               locations = points, 
+               newdata = grid)
+# or fit variogram + krige</div>
+        <div class="check-row">
+          <input type="checkbox" id="card8"><label for="card8">🌡️ Interpolation surface created</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 9: Spatial Joins (placeholder) -->
+    <div class="card">
+      <div class="card-header">🔗 Spatial Joins <span>9/12</span></div>
+      <div class="card-body">
+        <p><strong>Combine attributes by location.</strong> Merge polygon data to points, or aggregate points to polygons.</p>
+        <div class="formula-block">
+          $$\text{Join} = \text{Point} \bowtie_{\text{within}} \text{Polygon}$$
+        </div>
+        <div class="r-code">
+# Spatial join: attach census data to points
+library(sf)
+points_with_tract <- st_join(
+  points_sf, 
+  census_tracts, 
+  join = st_within
+)</div>
+        <div class="check-row">
+          <input type="checkbox" id="card9"><label for="card9">🔗 Join logic understood</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 10: Geocoding Quality (placeholder) -->
+    <div class="card">
+      <div class="card-header">📍 Geocoding Quality <span>10/12</span></div>
+      <div class="card-body">
+        <p><strong>Match score & precision.</strong> Rooftop vs. centroid vs. street-level accuracy matters.</p>
+        <div class="formula-block">
+          $$\text{Accuracy} = \frac{\text{Correct matches}}{\text{Total addresses}} \times 100\%$$
+        </div>
+        <div class="r-code">
+# Using tidygeocoder for batch geocoding
+library(tidygeocoder)
+result <- addresses %>%
+  geocode(address = street, 
+          method = 'census', 
+          full_results = TRUE)</div>
+        <div class="check-row">
+          <input type="checkbox" id="card10"><label for="card10">🎯 Match rate reviewed</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 11: Coordinate Reference Systems (placeholder) -->
+    <div class="card">
+      <div class="card-header">🌐 CRS & Projections <span>11/12</span></div>
+      <div class="card-body">
+        <p><strong>EPSG codes matter.</strong> Geographic (4326) vs. projected (UTM, Albers) for accurate measurement.</p>
+        <div class="formula-block">
+          $$\text{dist} = \text{st_distance}(A, B) \quad \text{(use projected CRS)}$$
+        </div>
+        <div class="r-code">
+# Transform to projected CRS for meters
+library(sf)
+points_proj <- st_transform(points_sf, 32633)
+st_distance(points_proj[1,], points_proj[2,])</div>
+        <div class="check-row">
+          <input type="checkbox" id="card11"><label for="card11">🗺️ CRS transformed correctly</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 12: Interactive Mapping (placeholder) -->
+    <div class="card">
+      <div class="card-header">🖱️ Interactive Maps <span>12/12</span></div>
+      <div class="card-body">
+        <p><strong>Leaflet & tmap view mode.</strong> Pan, zoom, popups for exploration and dashboards.</p>
+        <div class="formula-block">
+          $$\text{Map} = \text{basemap} + \text{markers} + \text{popups}$$
+        </div>
+        <div class="r-code">
+library(leaflet)
+leaflet(data = points_sf) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    popup = ~name,
+    radius = 5,
+    color = "#6E3061"
+  )</div>
+        <div class="check-row">
+          <input type="checkbox" id="card12"><label for="card12">🌍 Interactive view ready</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+<footer>
+       <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+ 
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+    
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+ </footer>
+
+
+    <script>
+         // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();  
+ 
+  (function() {
+    // Dark/Light toggle
+    const darkToggle = document.getElementById('darkToggle');
+    const body = document.body;
+
+    // Check saved preference
+    if (localStorage.getItem('geocardDark') === 'true') {
+      body.classList.add('dark');
+    }
+
+    darkToggle.addEventListener('click', function() {
+      body.classList.toggle('dark');
+      localStorage.setItem('geocardDark', body.classList.contains('dark'));
+    });
+
+    // Print button with explicit page size hint
+    const printBtn = document.getElementById('printButton');
+    printBtn.addEventListener('click', function() {
+      window.print();
+    });
+
+    // Checkbox persistence (optional, stored in localStorage)
+    const checkboxes = document.querySelectorAll('.check-row input[type="checkbox"]');
+    checkboxes.forEach((cb, idx) => {
+      const saved = localStorage.getItem('geocheck_' + idx);
+      if (saved === 'true') cb.checked = true;
+      else if (saved === 'false') cb.checked = false;
+
+      cb.addEventListener('change', function() {
+        localStorage.setItem('geocheck_' + idx, cb.checked);
+      });
+    });
+
+    console.log('📐 Geospatial reference cards ready. 12 cards with placeholders.');
+  })();
+</script>
+</body>
+</html>

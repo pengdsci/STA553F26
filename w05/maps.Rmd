@@ -1,0 +1,1323 @@
+---
+title: "Visualizing Spatial Information with Interactive Maps in R"
+author: "Cheng Peng"
+date: "West Chester University"
+output:
+  html_document:
+    theme: yeti
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
+    number_sections: yes
+    toc_collapsed: yes
+    code_folding: hide
+    code_download: yes
+    smooth_scroll: yes
+    highlight: tango
+    css: styles.css
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,       
+                      warning = FALSE,   
+                      result = TRUE,   
+                      message = FALSE,
+                      fig.width = 8,
+                      fig.height = 5,
+                      fig.align = "center",
+                      comment = NA)
+library(sf)
+library(leaflet)
+library(mapview)
+library(tmap)
+#library(mapdeck)
+library(ggplot2)
+library(ggiraph)
+```
+
+
+```{css echo = FALSE}
+/* ============ CSS Styling for Lecture Notes ============ */
+
+/* Table of content - navigation */
+#TOC::before {
+  content: "Table of Contents";
+  font-weight: bold;
+  font-size: 1.2em;
+  text-align: center;
+  display: block;
+  color: #6E3061;
+  margin-bottom: 10px;
+  background-color: transparent;
+}
+
+
+div#TOC li {     /* table of content  */
+    list-style:upper-roman;
+    background-image:none;
+    background-repeat:none;
+    background-position:0;
+    font-weight: 400; 
+    font-size: 1.2em;
+    background-color:transparent;
+    color: #6E3061;
+}
+
+/* Title fonts */
+
+h1.title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #6E3061;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+  font-variant-caps: normal;
+}
+
+h4.author { 
+  font-size: 1.8rem;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #6E3061;
+  text-align: left;
+}
+
+h4.date { 
+  font-size: 2.0rem;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #6E3061;
+  text-align: left;
+}
+
+
+body {
+  font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.7;
+  color: #2d1b29;
+  background-color: #fdfafd;
+  font-size: 1.6rem;
+}
+
+
+/* Section headers */
+
+h1 {
+  color: #6E3061;
+  border-bottom: 3px solid #6E3061;
+  padding-bottom: 8px;
+  margin-top: 40px;
+  font-weight: bold;
+  font-size: 2.2rem;
+}
+
+h2 {
+  color: #6E3061;
+  border-left: 5px solid #6E3061;
+  padding-left: 12px;
+  margin-top: 30px;
+  font-weight: bold;
+  font-size: 1.8rem;
+}
+
+h3 {
+  color: #8b4a7d;
+  margin-top: 24px;
+  font-weight: bold;
+  font-size: 1.8m;
+}
+
+h4 {
+  color: #a05f92;
+  margin-top: 18px;
+  font-weight: bold;
+  font-size: 1.4rem;
+}
+
+code {
+  background-color: #f4edf3;
+  color: #4a2040;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 0.9em;
+  border: 1px solid #d4c0d1;
+}
+
+pre {
+  background-color: #f9f5f9;
+  border: 1px solid #d4c0d1;
+  border-left: 4px solid #6E3061;
+  border-radius: 6px;
+  padding: 14px;
+}
+
+pre code {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+blockquote {
+  background-color: #f4edf3;
+  border-left: 4px solid #6E3061;
+  padding: 12px 18px;
+  margin: 16px 0;
+  border-radius: 0 6px 6px 0;
+  color: #4a2040;
+}
+
+.important-box {
+  background: #e8f4f8;
+  border: 1px solid #b8dff0;
+  border-radius: 8px;
+  padding: 1rem 2.5rem 1rem 1.5rem;
+  margin: 1rem 0;
+  position: relative;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  color: #0c5460;
+}
+
+.note-box {
+  background-color: #f0e6ee;
+  border: 1px solid #c49bb8;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+
+.note-box strong {
+  color: #6E3061;
+}
+
+.tip-box {
+  background-color: #e8f5e9;
+  border: 1px solid #81c784;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+
+.tip-box strong {
+  color: #2e7d32;
+}
+
+.warning-box {
+  background-color: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+
+.warning-box strong {
+  color: #e65100;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+table th {
+  background-color: #6E3061;
+  color: white;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #d4c0d1;
+}
+
+table tr:nth-child(even) td {
+  background-color: #faf5f9;
+}
+
+table tr:hover td {
+  background-color: #f0e6ee;
+}
+
+.toc {
+  background-color: #faf5f9;
+  border: 1px solid #d4c0d1;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+
+.figure {
+  border: 1px solid #e0d1db;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(110, 48, 97, 0.08);
+}
+```
+
+
+# Introduction
+
+This lecture note focuses on **Interactive Spatial Maps** in R. By the end of this lecture, you will be able to:
+
+* Identify the four core layers of any interactive map
+
+* Select appropriate map types based on your data and audience
+
+* Implement popups, tooltips, and visual encodings in R
+
+* Choose among major R mapping libraries for different use cases
+
+Each topic will be illustrated using some working examples codng in R.
+
+
+
+# Map Structure and Layers
+
+
+## Map Data Formats
+
+Map data formats are generally divided into two main types: vector (points, lines, and polygons) and raster (pixel-based images). Today, GeoPackage is the modern, recommended standard, but Shapefile and GeoJSON remain widely used.
+
+The table below summarizes the most important formats to help you distinguish between them.
+
+
+| Format	| Type  | 	Key Characteristics	|   Best For    |
+|:----------|:---------|:--------------------------------------|:-------------------------------|
+| GeoPackage (.gpkg) |	Vector & Raster |	Open standard (OGC), single file (SQLite database), no size limits, modern replacement for Shapefile. |	Most GIS work, sharing projects, storing multiple layers. |
+| Shapefile (.shp) |	Vector |	Industry standard but outdated; requires multiple files (.shp, .dbf, .shx); has size and column name limits. |	Legacy data, compatibility with older software. |
+| GeoJSON (.geojson) |	Vector |	Web-friendly, text-based, human-readable format for encoding geometry and attributes. |	Web mapping, lightweight data exchange. |
+| KML/KMZ (.kml, .kmz) |	Vector |	XML-based, originally for Google Earth, widely supported in web browsers. |	Sharing data with Google Earth or other web-based viewers. |
+| GeoTIFF (.tif, .tiff) |	Raster |	Standard raster format with embedded georeferencing info; supports high resolution and metadata. |	Satellite imagery, aerial photos, elevation models. |
+| CSV (.csv) |	Tabular (Vector) |	Simple text format for spreadsheet data; can represent point geometries with coordinate columns. |	Sharing non-spatial data that has coordinates (e.g., locations from Excel). |
+
+## Commonly Used Basemaps in R Map Libraries
+
+Modern R mapping packages provide access to dozens of basemap tile providers through unified interfaces. Here are the most frequently used basemaps across popular R libraries:
+
+
+| Basemap Name	| Provider	| Style Description | Libraries	| API Key Required? |    
+|:--------------|:-----------|:----------------------|:---------------|:--------|
+| CartoDB.Positron	|	CARTO	|	Light, clean, minimal (grayscale) | `tmap()`, `leaflet()`, `basemap()` |	No	|
+| CartoDB.Dark	|	CARTO	|	Dark-themed, modern |`tmap()`, `leaflet()`, `basemap()` 	|	No
+| OpenStreetMap	|	OSM	|	Standard street map | `tmap()`, `leaflet()`, `basemap()`	|	No
+| Esri.WorldImagery	|	Esri	|	High-resolution satellite imagery |	`leaflet()` |	No	|
+| Esri.NatGeoWorldMap	|	Esri	|	National Geographic style | `basemap()`	|	No
+| OpenTopoMap	|	OpenTopoMap	|	Topographic with contour lines | `tmap()`, `basemap()`	|	No	|
+
+
+
+
+
+## Map Layers
+
+Every interactive map, regardless of complexity, is built upon a layered architecture. Understanding these foundational components allows you to construct maps systematically, troubleshoot rendering issues, and extend functionality with confidence.
+
+In R spatial visualization, four essential layers work together:
+
+| Layer	|     Description	  |     R Implementation|
+|:----------|:--------------------|:-----------------------------------|
+|  Data Layer|  	Spatial information (vector or raster)|  	`sf` objects, `SpatRaster`|  
+|  Base Map / Tiles|	Background geographic context|  	`leaflet::addTiles()`|  
+|  Rendering Engine	|  Library that draws the map|  	Leaflet, Mapbox GL, Mapdeck|  
+|  Interactive Overlays	|  Popups, legends, controls|  	`addPopup()`, `addControl()`|  
+
+
+<div class="note-box"> The pipe operator (<code>%>%</code>) in leaflet and related libraries mirrors the layered nature of maps. Each layer is added sequentially, and the order matters for visual stacking. </div>
+
+
+
+## Core Layers in Practice
+
+Let us examine how the four core layers manifest in a working R example. We will use leaflet, the most popular interactive mapping engine in R, to build a map that includes all essential components.
+
+**Example**: Complete Layered Map with Leaflet
+
+```{r}
+# Load required libraries
+library(leaflet)
+library(sf)
+
+# Create sample point data (Statue of Liberty)
+liberty_point <- st_as_sf(
+  data.frame(name = "Statue of Liberty", 
+             lon = -74.0445, 
+             lat = 40.6892),
+  coords = c("lon", "lat"),
+  crs = 4326
+)
+
+# Build the complete layered map
+leaflet() %>%
+  # Layer 1: Base map tiles
+  addTiles(group = "Street Map") %>%
+  
+  # Layer 2: Alternative base map (CartoDB)
+  addProviderTiles("CartoDB.Positron", group = "Light Background") %>%
+  
+  # Layer 3: Data layer (point geometry)
+  addCircleMarkers(
+    data = liberty_point,
+    radius = 10,
+    color = "#6E3061",
+    fillOpacity = 0.7,
+    label = ~name,
+    popup = ~paste("<b>", name, "</b><br>Liberty Island, New York")
+  ) %>%
+  
+  # Layer 4: Interactive overlay (layer control)
+  addLayersControl(
+    baseGroups = c("Street Map", "Light Background"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+```
+
+
+**Interpretation**
+
+* `addTiles()` and `addProviderTiles()` provide base map layers
+
+* `addCircleMarkers()` adds the data layer (vector point)
+
+* The rendering engine is Leaflet (JavaScript library wrapped for R)
+
+* `addLayersControl()` creates an interactive overlay allowing users to switch backgrounds
+
+
+<div class="tip-box"> Always test your map with different base map providers. Some tiles (e.g., CartoDB.Positron) are better for thematic data, while OSM street maps work well for navigation contexts. </div>
+
+
+The four-layer framework (data, base map, engine, overlays) provides a mental model for constructing any interactive map. In R, leaflet implements this model directly through its pipe-friendly API. Remember: layers are added sequentially, and interactive controls enhance user experience.
+
+## Map Data Structures in R
+
+Spatial data in R comes in two primary flavors: vector (points, lines, polygons) and raster (gridded cells). 
+
+* **Raster data** divides space into a regular grid of cells (pixels), where each cell contains a value representing information at that location.
+  + **Resolution dependent**: Zooming in reveals pixels (blocky appearance)
+  + **Continuous surfaces**: Ideal for phenomena that vary across space
+  + **Fixed origin**: Each cell aligns to a grid
+  + **Analytical power**: Supports map algebra, focal statistics, terrain analysis
+
+* **Vector data** represents geographic features as geometric primitives defined by coordinates.
+  + **Scale-independent**: Smooth appearance at any zoom level
+  + **Discrete objects**: Clear boundaries and identities
+  + **Attributes attached**: Each feature has a row in an attribute table
+  + **Precision**: Exact coordinate locations
+
+```{}
+Layer Stack (bottom to top):
+┌─────────────────────────────────┐
+│  Vector: Labels & Annotations   │  ← Top
+├─────────────────────────────────┤
+│  Vector: Points (cities, etc.)  │
+├─────────────────────────────────┤
+│  Vector: Lines (roads, rivers)  │
+├─────────────────────────────────┤
+│  Vector: Polygons (boundaries)  │
+├─────────────────────────────────┤
+│  Raster: Basemap (imagery)      │
+└─────────────────────────────────┘  ← Bottom
+```
+
+
+The `sf` (simple features) package has become the modern standard for vector data, while `terra` handles raster operations efficiently. When building interactive maps, `leaflet` can consume both types with appropriate functions.
+
+
+
+
+
+**Example 1**: Working with `sf` **Vector Data**
+
+```{r}
+library(sf)
+library(leaflet)
+
+# Load built-in North Carolina counties shapefile
+nc_counties <- st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+
+# Examine the structure
+print(class(nc_counties))        # "sf" and "data.frame"
+print(names(nc_counties))        # Attributes include NAME, AREA, BIR74, etc.
+
+# Interactive choropleth with sf object
+leaflet(nc_counties) %>%
+  addTiles() %>%
+  addPolygons(
+    fillColor = ~colorNumeric("YlOrRd", BIR74)(BIR74),
+    fillOpacity = 0.6,
+    weight = 1.5,
+    color = "white",
+    label = ~paste(NAME, ": ", BIR74, " births"),
+    popup = ~paste("<b>", NAME, "</b><br>Births 1974: ", BIR74)
+  )
+```
+
+
+
+**Example 2**: Adding **Raster Data**
+
+```{r}
+library(terra)
+library(leaflet)
+
+# Create a small elevation-like raster
+elev_raster <- rast(nrows = 30, ncols = 30, 
+                    xmin = -10, xmax = 10, 
+                    ymin = -10, ymax = 10)
+values(elev_raster) <- runif(ncell(elev_raster)) * 100
+
+# Display raster on interactive map
+leaflet() %>%
+  addTiles() %>%
+  addRasterImage(elev_raster, colors = "Spectral", opacity = 0.7) %>%
+  addControl("Simulated Elevation Data", position = "bottomleft") %>%
+  addMarkers(lng = 0, lat = 0, popup = "(lng,lat)=(0,0)") 
+```
+
+
+<div class="tip-box"> When working with large rasters, <code>addRasterImage()</code> may be slow. Consider downsampling your raster or using <code>mapview</code> which implements more efficient raster rendering. For production dashboards, pre-compute raster tiles using <code>gdal2tiles</code>. </div>
+
+
+* `sf` objects are the modern standard for vector data — use them for almost all new projects
+
+* `terra::SpatRaster` is the recommended raster format (replacing the older raster package)
+
+* Both formats integrate with leaflet via `addPolygons()`/`addCircleMarkers()` for vectors and `addRasterImage()` for rasters
+
+
+<div class="warning-box "> Master <code>sf</code> first. It handles 90% of interactive mapping needs. Learn <code>terra</code> when working with satellite imagery, elevation models, or continuous surfaces. 
+</div>
+
+
+
+Interactive maps in R rest on a clear four-layer architecture. The leaflet package provides intuitive syntax for assembling these layers. Vector data should be stored as sf objects, while raster data uses terra. Understanding these foundations enables systematic map construction and troubleshooting.
+
+# Map Types and Decision Guide
+
+
+Choosing the right map type is a critical design decision that affects interpretability and impact. Different spatial phenomena demand different visual encodings. This section covers four common interactive map types, each with its own use cases, strengths, and limitations.
+
+<div class="note-box"> Always start by asking: What is the fundamental nature of my data? Points (discrete locations)? Polygons (areas)? Continuous surfaces? The answer guides your map type selection. 
+</div>
+
+
+## Point and Proportional Symbol Maps
+
+**Point maps** place symbols at exact geographic coordinates. **Proportional symbol maps** scale the symbol size according to a numeric attribute (e.g., earthquake magnitude, population at a location). These maps excel when precise locations matter and when you want to encode an additional variable through visual variables like size or color.
+
+**When to Use**
+
+|   Scenario	|  Example	|  Why It Works|
+|:------------|:-------------------|:-----------------------------------------|
+| Crime incidents| 	Locations of burglaries| 	Exact positions help pattern analysis| 
+| Earthquake monitoring| 	Epicenters with magnitude scaling| 	Size encodes severity intuitively| 
+| Store locations| 	Retail outlets across a city| 	Shows geographic distribution| 
+| Public facilities| 	Hospitals, schools, fire stations| 	Enables accessibility planning| 
+
+
+**Example**: Earthquake Magnitudes with Proportional Circles
+
+```{r}
+library(leaflet)
+
+# Use built-in earthquake dataset (1000+ points)
+data(quakes)
+
+# Subset for demonstration
+quakes_sample <- quakes[1:50, ]
+
+leaflet(quakes_sample) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    lng = ~long,
+    lat = ~lat,
+    radius = ~mag * 2.5,              # Proportional to magnitude
+    color = "#6E3061",
+    fillOpacity = 0.5,
+    weight = 1.5,
+    label = ~paste("Magnitude:", mag, " | Depth:", depth, "km"),
+    popup = ~paste(
+      "<b>Earthquake Event</b><br>",
+      "Magnitude: ", mag, "<br>",
+      "Depth: ", depth, " km<br>",
+      "Stations reporting: ", stations
+    )
+  ) %>%
+  addLegend(
+    position = "bottomright",
+    title = "Magnitude (circle size)",
+    values = quakes_sample$mag,
+    labels = c("4.0", "5.0", "6.0"),
+    colors = c("#6E3061", "#8e4a7e", "#b284a8")
+  )
+```
+
+
+<div class="tip-box"> When using proportional symbols, ensure the size scaling is perceptually linear. For magnitude data (logarithmic scale), consider applying a square root transformation to prevent extremely large symbols from dominating the visualization. </div>
+
+
+**Point maps** and **proportional symbol maps** are ideal for discrete location data. The key decision is whether to encode an additional variable (via size, color, or opacity) and whether to use clustering for dense datasets. Always provide a legend for proportional symbols.
+
+## Choropleth Maps
+
+**Choropleth** maps color polygons (counties, census tracts, countries) according to a statistical variable. These are among the most common **thematic maps**, excellent for showing spatial patterns of normalized rates. However, they can mislead if raw counts are used instead of rates, especially when polygons vary dramatically in area.
+
+<div class="important-box"> Never use raw counts for choropleth maps unless all polygons have equal area AND equal population. Always normalize by area (density) or population (per capita rates). A large polygon will naturally have higher raw counts than a small one, creating visual bias. </div>
+
+
+**When to Use**
+
+
+|Scenario	| Appropriate Normalization |
+|:-----------------|:---------------------------|
+| Election results	| Percentage of votes (rates)| 
+| Population density	| People per square km (area normalization)| 
+| Disease incidence	| Cases per 100,000 people (population normalization)|
+| Income levels	| Median household income (already a rate-like measure)|
+
+
+**Example**: County-Level Birth Rates with tmap
+
+```{r}
+library(tmap)
+library(sf)
+
+# Load North Carolina counties
+nc <- st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+
+# Calculate birth rate per 1000 people (using BIR74 and population estimate)
+# For demonstration, we'll use BIR74 directly but note the limitation
+
+# Interactive choropleth with tmap
+tmap_mode("view")  # Switch to interactive mode
+
+tm_shape(nc) +
+  tm_polygons(
+    col = "BIR74",
+    title = "Number of Births (1974)",
+    palette = "Purples",
+    alpha = 0.7,
+    border.col = "white",
+    border.alpha = 0.5,
+    popup.vars = c(
+      "County" = "NAME",
+      "Births 1974" = "BIR74",
+      "Area (sq km)" = "AREA"
+    )
+  ) +
+  tm_view(set.zoom.limits = c(6, 12))
+```
+
+
+**Alternative**: Using leaflet for Choropleth
+
+
+```{r}
+library(leaflet)
+library(sf)
+
+nc <- st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+
+# Create color palette
+pal <- colorNumeric(palette = "Purples", domain = nc$BIR74)
+
+leaflet(nc) %>%
+  addTiles() %>%
+  addPolygons(
+    fillColor = ~pal(BIR74),
+    fillOpacity = 0.7,
+    weight = 1,
+    color = "white",
+    label = ~paste(NAME, ": ", BIR74, " births"),
+    highlightOptions = highlightOptions(
+      weight = 3,
+      color = "#6E3061",
+      fillOpacity = 0.9
+    )
+  ) %>%
+  addLegend(pal = pal, values = ~BIR74, title = "Births (1974)", position = "bottomright")
+```
+
+<div class="takeaway-box"> For choropleth maps, always use sequential color palettes (light to dark) for ordered data and diverging palettes (two contrasting colors) for data with a meaningful midpoint (e.g., election margins). The <code>RColorBrewer</code> package provides perceptually uniform palettes. </div>
+
+
+**Choropleth maps** are powerful for area-aggregated statistics but require careful normalization and color choices. Use sequential palettes for ordered data, diverging for bipolar data. Libraries like leaflet and tmap both support interactive choropleths with popups and hover effects.
+
+## Heatmaps and Flow Maps
+
+**Heatmaps (density maps)** show the intensity of point patterns using a color gradient, effectively creating a continuous surface from discrete events. Flow maps depict movement between locations (migration, trade, transportation) using lines with varying widths. Both are excellent for large, overlapping point datasets where individual markers would clutter.
+
+
+**When to Use Heatmaps**
+
+* Accident hotspots (identifying high-density areas)
+
+* Crime concentration analysis
+
+* Wildlife tracking density
+
+* Any scenario with thousands of overlapping points
+
+**Example**: Earthquake Density Heatmap
+
+```{r}
+library(leaflet)
+library(leaflet.extras)  # Provides addHeatmap()
+
+# Full earthquake dataset (1000 points)
+leaflet(quakes) %>%
+  addTiles() %>%
+  addHeatmap(
+    lng = ~long,
+    lat = ~lat,
+    intensity = ~mag,          # Weight by magnitude
+    blur = 20,                 # Smoothing parameter
+    max = 0.8,                 # Maximum intensity
+    radius = 15                # Radius of influence
+  ) %>%
+  addControl(
+    html = "<b>Earthquake Density</b><br>Red = higher concentration",
+    position = "bottomleft"
+  )
+```
+
+Flow Maps with mapdeck (WebGL for Performance)
+
+```{}
+library(mapdeck)
+
+# Set Mapbox token (required for mapdeck)
+# set_token("YOUR_MAPBOX_TOKEN")
+
+# Example: Flow lines between cities (simplified)
+# Note: mapdeck requires properly formatted sf LINESTRING objects
+# This is a conceptual example
+if(FALSE) {  # Not executed without token
+  mapdeck(style = mapdeck_style("light"), zoom = 4, pitch = 45) %>%
+    add_arc(
+      data = flow_data,
+      origin = c("origin_lon", "origin_lat"),
+      destination = c("dest_lon", "dest_lat"),
+      stroke_width = "flow_volume",
+      stroke_colour = "#6E3061"
+    )
+}
+```
+
+
+<div class="note-box"> Flow maps require line geometries. Use <code>sf</code> to create LINESTRING objects connecting origin-destination pairs. For large flow datasets, <code>mapdeck</code> provides WebGL acceleration that outperforms leaflet significantly. </div>
+
+
+
+**Heatmaps** excel at revealing density patterns in large point datasets, while flow maps communicate movement between locations. Use leaflet.extras::addHeatmap() for quick density visualization and mapdeck for high-performance flow mapping with thousands of arcs.
+
+## Cartograms and Bivariate Maps
+
+
+**Cartograms** distort polygon sizes according to a variable (e.g., electoral votes distorting state area, population distorting country size). Bivariate maps display two variables simultaneously using color mixing (e.g., income vs education, unemployment vs poverty). These are advanced techniques but libraries like tmap and cartogram make them accessible.
+
+**Example**: Bivariate Choropleth Conceptual
+
+```{r}
+# Bivariate mapping requires creating a combined color scheme
+# This example shows the structure
+
+library(tmap)
+data(World)
+
+# Create categorical variables for demonstration
+World$gdp_cat <- cut(World$gdp_cap_est, 
+                      breaks = quantile(World$gdp_cap_est, na.rm = TRUE),
+                      labels = c("Very Low", "Low", "High", "Very High"),
+                      include.lowest = TRUE)
+
+World$life_cat <- cut(World$life_exp,
+                       breaks = quantile(World$life_exp, na.rm = TRUE),
+                       labels = c("Very Low", "Low", "High", "Very High"),
+                       include.lowest = TRUE)
+
+# Interactive bivariate-style map (simplified)
+tmap_mode("view")
+tm_shape(World) +
+  tm_polygons(
+    col = "gdp_cat",
+    title = "GDP per capita (categories)",
+    palette = "Blues",
+    popup.vars = c("Country" = "name", "GDP" = "gdp_cap_est", "Life Exp" = "life_exp")
+  )
+```
+
+
+<div class="important-box"> True bivariate choropleth maps require specialized color ramps (e.g., 3x3 grid mixing two color schemes). The <code>biscale</code> package provides this functionality but is beyond this introductory scope. Cartograms require the <code>cartogram</code> package and are computationally intensive. </div>
+
+
+Advanced map types like cartograms and bivariate maps address specific analytical needs: cartograms emphasize magnitude over geography, while bivariate maps show relationships between two variables. These are powerful but use them sparingly — they require more interpretation effort from your audience.
+
+
+Selecting the appropriate map type is a design decision grounded in your data structure and communication goals:
+
+| Map Type	| Best For	| Avoid When |
+|:---------------|:-----------------------|:-----------------------------|
+| Point/Proportional	| Exact locations, magnitude encoding	| Extreme overplotting | 
+| Choropleth	| Area-aggregated rates	| Raw counts, unequal polygons | 
+| Heatmap	| Density of many points	| Exact value interpretation needed | 
+| Flow/Cartogram	| Movement, magnitude distortion	| Small datasets, unfamiliar audiences | 
+
+
+<div class="takeaway-box"> When in doubt, start with a point map or choropleth. These are most familiar to genevral audiences. Add complexity only when the analytical question demands it. </div>
+
+
+
+# Graphical and Interactive Overlays
+
+
+A static map tells a story; an interactive map invites exploration. This section covers graphical elements (popups, tooltips, visual encodings) and interactive hooks (layer controls, Shiny proxies) that transform simple maps into dynamic applications.
+
+## Popups and Tooltips
+
+Popups appear on click and can contain rich HTML (tables, images, links, formatted text). Tooltips appear on hover and are ideal for quick previews of attribute data. Both enhance the user's ability to retrieve information from the map without cluttering the visual display.
+
+**Example**: Rich HTML Popups with Images
+
+```{r}
+library(leaflet)
+
+# Sample data with image URLs
+landmarks <- data.frame(
+  name = c("Statue of Liberty", "Eiffel Tower", "Taj Mahal", "Great Wall of China"),
+  lng = c(-74.0445, 2.2945, 78.0421, 116.33),
+  lat = c(40.6892, 48.8584, 27.1751, 40.25),
+  year_built = c("1886", "1889", "1653", "7th Century BC"),
+  image = c(
+    "https://upload.wikimedia.org/wikipedia/commons/a/a1/Statue_of_Liberty_7.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg/960px-Tour_Eiffel_Wikimedia_Commons_%28cropped%29.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/6/67/Taj_Mahal_in_India_-_Kristian_Bertel.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/2/23/The_Great_Wall_of_China_at_Jinshanling-edit.jpg"
+  ),
+  wikiurl = c("https://en.wikipedia.org/wiki/Statue_of_Liberty", "https://en.wikipedia.org/wiki/Eiffel_Tower", "https://en.wikipedia.org/wiki/Taj_Mahal", "https://en.wikipedia.org/wiki/Great_Wall_of_China")
+)
+
+leaflet(landmarks) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    lng = ~lng,
+    lat = ~lat,
+    radius = 12,
+    color = "#6E3061",
+    fillOpacity = 0.8,
+    label = ~name,  # Tooltip on hover
+    popup = ~paste0(
+      "<div style='width:250px;'>",
+      "<b style='font-size:16px; color:#6E3061;'>", name, "</b><br>",
+      "<img src='", image, "' width='240' style='border-radius:8px; margin:8px 0;'><br>",
+      "<b>Year Built:</b> ", year_built, "<br>",
+      "<a href='",wikiurl,"' target='_blank'>Learn more</a>",
+      "</div>"
+    )
+  )
+```
+
+
+<div class="tip-box"> Popup content can include any HTML. Use <code>paste0()</code> to construct strings with inline CSS for styling. For complex popups, consider using the <code>htmltools</code> package to build HTML elements programmatically. </div>
+
+
+Popups and tooltips are essential for interactive data exploration. Tooltips provide immediate, low-friction previews. Popups support rich, detailed content on demand. Always ensure popups are not too large for small screens by setting appropriate widths (e.g., 200-300px).
+
+## Visual Encodings – Radius, Opacity, and Clustering
+
+
+Beyond position and color, interactive maps allow dynamic visual encodings: radius scaling (proportional symbols), opacity mapping (uncertainty or intensity), and clustering (aggregation for large point sets). These encodings reduce visual clutter and convey additional data dimensions.
+
+**Example**: Multiple Encodings Together
+
+```{r}
+library(leaflet)
+
+# Use earthquake data with three encodings
+leaflet(quakes) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    # Encoding 1: Radius proportional to magnitude
+    radius = ~sqrt(mag) * 4,   # Square root for perceptual scaling
+    
+    # Encoding 2: Color by depth (deeper = darker)
+    color = ~colorNumeric("RdYlBu", depth)(depth),
+    
+    # Encoding 3: Opacity varies with stations count
+    fillOpacity = ~(stations / max(stations)) * 0.8,
+    
+    # Clustering for performance
+    clusterOptions = markerClusterOptions(
+      spiderfyOnMaxZoom = TRUE,
+      showCoverageOnHover = FALSE,
+      zoomToBoundsOnClick = TRUE
+    ),
+    
+    label = ~paste("Mag:", mag, " | Depth:", depth, "km"),
+    popup = ~paste(
+      "<b>Earthquake</b><br>",
+      "Magnitude: ", mag, "<br>",
+      "Depth: ", depth, " km<br>",
+      "Reporting Stations: ", stations
+    )
+  ) %>%
+  addLegend(
+    position = "bottomright",
+    pal = colorNumeric("RdYlBu", quakes$depth),
+    values = quakes$depth,
+    title = "Depth (km)",
+    opacity = 0.7
+  )
+```
+
+
+<div class="important-box"> When using clustering, be aware that clusters aggregate counts. A cluster of 100 small-magnitude earthquakes looks identical to a cluster of 100 large-magnitude ones. Always provide a way to zoom in to see individual point attributes. </div>
+
+
+**Visual encodings** multiply the data dimensions a single map can communicate. Use radius for magnitude, opacity for confidence/uncertainty, and clustering for performance with large datasets. However, avoid encoding more than 2-3 variables simultaneously to maintain interpretability.
+
+
+## Interactivity Hooks – Layer Control and Shiny Integration
+
+
+Advanced interactivity includes layer controls (toggle overlays on/off, switch base maps) and Shiny integration via leafletProxy(). These features transform static widgets into reactive dashboard components.
+
+**Example**: Layer Control with Multiple Overlays
+
+```{r}
+library(leaflet)
+
+# Create two different point layers
+earthquakes_small <- quakes[quakes$mag < 5, ]
+earthquakes_large <- quakes[quakes$mag >= 5, ]
+
+leaflet() %>%
+  # Base maps (toggle between them)
+  addProviderTiles("CartoDB.Positron", group = "Light") %>%
+  addProviderTiles("OpenStreetMap", group = "Street") %>%
+  addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
+  
+  # Overlay groups
+  addCircleMarkers(
+    data = earthquakes_small,
+    lng = ~long, lat = ~lat,
+    radius = 4,
+    color = "blue",
+    group = "Small (mag < 5)",
+    label = ~paste("Mag:", mag)
+  ) %>%
+  addCircleMarkers(
+    data = earthquakes_large,
+    lng = ~long, lat = ~lat,
+    radius = 10,
+    color = "red",
+    group = "Large (mag >= 5)",
+    label = ~paste("Mag:", mag)
+  ) %>%
+  
+  # Layer control widget
+  addLayersControl(
+    baseGroups = c("Light", "Street", "Satellite"),
+    overlayGroups = c("Small (mag < 5)", "Large (mag >= 5)"),
+    options = layersControlOptions(collapsed = FALSE)
+  ) %>%
+  
+  # Optional: hide one group initially
+  hideGroup("Small (mag < 5)")
+```
+
+
+Shiny Integration with leafletProxy
+
+```{}
+# Conceptual Shiny server code
+# library(shiny)
+
+# server <- function(input, output, session) {
+#   output$map <- renderLeaflet({
+#     leaflet() %>% addTiles() %>% setView(0, 0, zoom = 2)
+#   })
+#   
+#   # Update map without redrawing entire widget
+#   observeEvent(input$add_points, {
+#     leafletProxy("map") %>%
+#       addCircleMarkers(
+#         data = new_points,
+#         lng = ~lon, lat = ~lat,
+#         radius = 6,
+#         color = "#6E3061"
+#       )
+#   })
+# }
+```
+
+<div class="takeaway-box"> <code>leafletProxy()</code> is essential for Shiny apps. It updates the map incrementally rather than re-rendering the entire widget, preserving zoom state and user interactions. Always use it when adding or removing layers in response to user input. </div>
+
+Layer controls give users agency over what they see, improving map usability for complex datasets. Shiny integration via leafletProxy() enables reactive mapping applications. Together, these hooks transform static visualizations into interactive analytical tools.
+
+## Summary
+
+Interactive overlays elevate maps from static illustrations to exploratory instruments:
+
+| Feature |	Purpose	| Implementation |
+|:----------|:----------------------|:--------------------------------|
+| Popups	| Detailed information on click	| Rich HTML strings|
+| Tooltips| 	Quick preview on hover	| Simple text labels|
+| Proportional radius	| Encode magnitude	| `radius = ~value * scale`|
+| Opacity	|Show uncertainty	| `fillOpacity = ~confidence`|
+| Clustering	|Handle large datasets| 	`markerClusterOptions()`|
+| Layer control	|User-driven visibility	| `addLayersControl()`|
+| Shiny proxy	|Reactive updates	| `leafletProxy()`|
+
+
+
+# Key R Map Libraries – A Comparative Guide
+
+
+The R ecosystem offers multiple libraries for interactive mapping, each with distinct strengths. This section profiles the most popular packages: leaflet, mapview, tmap, mapdeck, and ggiraph/highcharter. Understanding their trade-offs will help you choose the right tool for each project.
+
+<div class="note-box"> No single library is "best" for all scenarios. Your choice should depend on data size, customization needs, performance requirements, and your familiarity with the library's syntax. </div>
+
+## leaflet – The Workhorse
+
+leaflet is the most widely used interactive mapping library in R, wrapping the JavaScript Leaflet library with a clean R interface. It integrates seamlessly with sf, Shiny, R Markdown, and the broader tidyverse. With extensive documentation and a large user community, leaflet is the safe default for most projects.
+
+**Strengths**
+
+* Extensive documentation and examples
+
+* Excellent Shiny integration
+
+* Wide range of add-on packages (leaflet.extras, leaflet.opacity)
+
+* Supports all standard map types
+
+**Limitations**
+
+* Performance degrades beyond 10,000 points without clustering
+
+* Limited 3D capabilities
+
+**Example**: Basic Leaflet Workflow
+
+```{}
+library(leaflet)
+library(sf)
+
+# Typical workflow
+sf_data <- st_read("my_data.shp")
+
+leaflet(sf_data) %>%
+  addTiles() %>%
+  addPolygons(
+    fillColor = ~pal(variable),
+    fillOpacity = 0.6,
+    popup = ~popup_html
+  ) %>%
+  addLegend(pal = pal, values = ~variable)
+```
+
+
+<div class="takeaway-box"> Start with <code>leaflet</code> for 90% of interactive mapping tasks. It balances ease of use, feature completeness, and performance. Only switch to alternatives when you encounter specific limitations. </div>
+
+
+## mapview – Rapid Exploration
+
+
+mapview is designed for quick, one-liner interactive maps. It automatically detects your data type (points, polygons, raster), adds appropriate popups displaying all attributes, and creates legends. This package is ideal for data exploration and quality checking, not for polished production maps.
+
+**Example**: One-Liner Map Exploration
+
+```{r}
+library(mapview)
+library(sf)
+
+# Load data
+nc <- st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+
+# One line produces a fully interactive map with popups and legend
+mapview(nc, zcol = "BIR74", legend = TRUE, layer.name = "Births 1974")
+
+# Multiple layers
+mapview(nc) + mapview(nc[nc$BIR74 > 1000, ], color = "red")
+```
+
+
+<div class="important-box"> <code>mapview</code> is not intended for customization. Use it to explore your data interactively before building a production map with <code>leaflet</code> or <code>tmap</code>. It is invaluable for quality assurance and initial pattern discovery. </div>
+
+
+**mapview** prioritizes speed of exploration over customization. One line of code produces a complete interactive map with all attributes accessible via popups. Use it during data cleaning and exploratory analysis, then switch to other libraries for final presentation.
+
+## tmap – Grammar of Graphics for Thematic Maps
+
+
+tmap (thematic maps) follows a grammar of graphics style similar to ggplot2. Its most powerful feature is the ability to switch between static and interactive output by changing a single option (tmap_mode("plot") vs tmap_mode("view")). This makes tmap ideal for creating consistent map series across different output formats.
+
+**Example**: Switching Between Static and Interactive
+
+```{r}
+library(tmap)
+library(sf)
+
+nc <- st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+
+# Static output (PNG, PDF)
+tmap_mode("plot")
+tm1 <- tm_shape(nc) + 
+  tm_polygons("BIR74", palette = "Purples", title = "Births 1974")
+tm1
+
+# Interactive output (HTML widget) – same code!
+tmap_mode("view")
+tm1  # Now renders as interactive map with popups
+```
+
+
+**Additional Features**
+
+```{r}
+nc <- st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+
+# Faceting (small multiples)
+tm_shape(nc) +
+  tm_polygons(c("BIR74", "SID74"), 
+              title = c("Births 1974", "SIDS 1974"),
+              palette = "Blues")
+
+# Adding basemaps
+tmap_mode("view")
+tm_shape(nc) + 
+  tm_basemap("CartoDB.Positron") +
+  tm_polygons("BIR74", alpha = 0.6)
+```
+
+
+
+<div class="tip-box"> <code>tmap</code> version 4 (released 2023) includes significant performance improvements and better interactive features. The grammar-of-graphics syntax is especially valuable when creating many similar maps (e.g., time series of the same region). </div>
+
+
+
+
+tmap offers a consistent grammar for both static and interactive maps. It excels at thematic mapping and map faceting. Use it when you need to produce both print-quality static maps and web-ready interactive versions from the same code.
+
+## mapdeck – High-Performance WebGL Mapping
+
+
+**mapdeck** uses Mapbox GL and WebGL to render large datasets efficiently, supporting 100,000+ points with smooth interaction. It offers 3D extrusions, arcs (flow maps), paths, and polygons with elevation. Note: Requires a free Mapbox access token (sign up at mapbox.com).
+
+**Requirements**
+
+* **Mapbox** account (free tier: 50,000 map loads per month)
+
+* **Access token set** via `set_token("your_token")`
+
+**Strengths**
+
+* Superior performance for large datasets
+
+* True 3D capabilities (extrusions, terrain)
+
+* Arc layers for flow mapping
+
+* GPU-accelerated rendering
+
+**Limitations**
+
+* Requires internet and Mapbox token
+
+* Less intuitive syntax than leaflet
+
+* Fewer community examples
+
+**Example**: Large Dataset Visualization
+
+```{}
+library(mapdeck)
+
+# Set your Mapbox token (replace with actual token)
+set_token("pk.eyJ1IjoieW91ci11c2VybmFtZSIsImEiOiJjbG0ifQ.example")
+
+# Scatterplot with 1000+ points
+mapdeck(
+  style = mapdeck_style("light"),
+  zoom = 4,
+  lat = 39.8283,
+  lon = -98.5795,
+  pitch = 45  # 3D tilt
+) %>%
+  add_scatterplot(
+    data = quakes,
+    lat = "lat",
+    lon = "long",
+    radius = 20,
+    fill_colour = "mag",
+    layer_id = "earthquakes",
+    tooltip = "mag"
+  )
+```
+
+
+<div class="note-box"> <code>mapdeck</code> requires data in specific formats (usually data.frames with lat/lon columns, not sf objects). Convert with <code>sf::st_coordinates()</code> if needed. The performance difference is dramatic for datasets over 50,000 points. </div>
+
+
+
+**mapdeck** is the performance king for large datasets and 3D visualizations. Use it when leaflet becomes sluggish (typically >10,000 points) or when you need arcs, extrusions, or terrain. The Mapbox token requirement is a minor hurdle for significant performance gains.
+
+## ggiraph and highcharter 
+
+**ggiraph** makes ggplot2 static graphics interactive by adding tooltips, hover effects, and click actions. **highcharter** wraps the Highcharts JavaScript library, known for elegant choropleths and time-series maps. Use these when you prefer to work within the ggplot2 ecosystem or need Highcharts' polished aesthetic.
+
+**Example**: ggiraph with sf and ggplot2
+
+```{r}
+library(ggplot2)
+library(ggiraph)
+library(sf)
+
+nc <- st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+
+# Create interactive ggplot
+gg <- ggplot(nc) +
+  geom_sf_interactive(
+    aes(
+      fill = BIR74,
+      tooltip = paste(NAME, "<br>Births:", BIR74),
+      data_id = NAME
+    ),
+    size = 0.2
+  ) +
+  scale_fill_viridis_c(option = "plasma") +
+  theme_minimal() +
+  labs(title = "Births in North Carolina Counties (1974)")
+
+# Render interactive
+girafe(ggobj = gg, options = list(opts_tooltip(css = "background-color:#6E3061;color:white;")))
+```
+
+
+**highcharter Example**
+
+```{}
+library(highcharter)
+library(sf)
+
+# Convert sf to GeoJSON for highcharter
+nc_json <- geojsonio::geojson_json(nc)
+
+hcmap(
+  map = nc_json,
+  data = nc,
+  value = "BIR74",
+  joinBy = "NAME",
+  name = "Births 1974",
+  borderColor = "white",
+  tooltip = list(pointFormat = "{point.NAME}: {point.value} births")
+) %>%
+  hc_title(text = "North Carolina Births") %>%
+  hc_colorAxis(stops = color_stops(5, c("#f7f4f9", "#6E3061")))
+```
+
+
+<div class="important-box"> <code>ggiraph</code> works only with <code>ggplot2</code> graphics. It cannot create the full range of interactive map features (zooming, panning, base map switching) that leaflet provides. Use it when you need selective interactivity within a ggplot2 workflow. </div>
+
+
+ggiraph and highcharter serve niche needs: interactive ggplot2 graphics and polished Highcharts visualizations, respectively. They are not general-purpose interactive mapping libraries but excel in specific contexts where their parent frameworks (ggplot2 or Highcharts) are already in use.
+
+## Library Selection Guide
+
+| Library	| Best For	| Avoid When	| Key Limitation |
+|:---------|:---------------|:----------------------|:---------------------------|
+| leaflet	| General purpose, Shiny, most projects	| >50K points	Performance with huge data| 
+| mapview	| Quick exploration, data QA	| Production maps	| Minimal customization| 
+| tmap	| Static+interactive consistency, faceting	| Performance-critical apps	| Slower than leaflet for large data| 
+| mapdeck	| Very large data, 3D, flow maps	| Offline use	| Requires Mapbox token| 
+| ggiraph	| Interactive ggplot2	| Pan/zoom needed	| No basemaps| 
+| highcharter	| Polished choropleths | Custom GIS operations	| Less flexible than leaflet| 
+
+
+<div class="takeaway-box"> Start with <code>leaflet</code> + <code>sf</code>. This combination handles 90% of interactive mapping needs. Add <code>mapview</code> for exploration, <code>tmap</code> for thematic consistency, and <code>mapdeck</code> when performance demands it. </div>
+
+
+# Conclusion and Key Takeaways
+
+This note has covered the essential aspects of interactive spatial mapping in R:
+
+**1. Map Structure**
+
+Every interactive map consists of four layers: data, base map, rendering engine, and overlays. The leaflet package's pipe syntax directly reflects this layered architecture.
+
+**2. Map Types**
+
+Select map types based on your data structure and communication goals:
+
+* Point/Proportional symbols → Discrete locations with magnitude
+
+* Choropleth → Area-aggregated rates (always normalize!)
+
+* Heatmaps → Density of many overlapping points
+
+* Flow/Cartogram → Movement or magnitude distortion
+
+**3. Interactive Overlays**
+
+Enhance maps with popups (rich HTML on click), tooltips (quick previews on hover), proportional symbols, opacity mapping, clustering for performance, and layer controls for user agency.
+
+**4. Library Ecosystem**
+
+```{}
+# Recommended workflow
+# 1. Explore with mapview
+mapview::mapview(your_data)
+
+# 2. Build production map with leaflet
+leaflet::leaflet(your_data) %>%
+  addTiles() %>%
+  addPolygons(...)
+
+# 3. If performance lags, upgrade to mapdeck
+mapdeck::mapdeck(token = "your_token") %>%
+  add_scatterplot(...)
+```
+
+
+<div class="important-box"> Always normalize choropleth data. A map of raw counts across unequal polygons is misleading. Use rates (per capita, per square km) instead. </div><div class="tip-box"> For reproducible research, save your interactive maps as standalone HTML files using <code>htmlwidgets::saveWidget()</code>. This preserves all interactivity and can be shared with collaborators who do not use R. </div><div class="takeaway-box"> The best map is not the most complex, but the one that communicates clearly. Start simple, iterate based on feedback, and always check your assumptions about color vision, data normalization, and performance needs. </div>
+
+
+**Final Code Template**
+
+```{}
+# Complete template for interactive map
+library(leaflet)
+library(sf)
+
+# Load and prepare data
+my_data <- st_read("path/to/data.shp")
+my_data$normalized_value <- my_data$raw_count / my_data$area
+
+# Create color palette
+pal <- colorNumeric("Purples", domain = my_data$normalized_value)
+
+# Build map
+leaflet(my_data) %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addPolygons(
+    fillColor = ~pal(normalized_value),
+    fillOpacity = 0.7,
+    weight = 1,
+    color = "white",
+    label = ~paste(NAME, ": ", round(normalized_value, 2)),
+    popup = ~paste(
+      "<b>", NAME, "</b><br>",
+      "Normalized value: ", round(normalized_value, 2), "<br>",
+      "Raw count: ", raw_count
+    ),
+    highlightOptions = highlightOptions(color = "#6E3061", weight = 3)
+  ) %>%
+  addLegend(pal = pal, values = ~normalized_value, title = "Rate per area")
+```
+
+
+
+
