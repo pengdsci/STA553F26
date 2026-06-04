@@ -2,7 +2,7 @@
 <html lang="en-US">
 <!--<![endif]-->
 <head>
-    <title>STA553-w07</title>
+    <title>STA553-w08</title>
 <link rel="stylesheet" type="text/css" href="css/css">  
 <link rel='stylesheet' id='dt_style-css'  href='css/style.css' type='text/css' />
 <link rel='stylesheet' id='dt_menu-css'  href='css/menu-buttons.css' type='text/css' /> 
@@ -52,7 +52,7 @@ var sgr_main = {"sgr_site_key":"6LcmTAcaAAAAAEELVElChVbNtpYH8TxjxPvYq9gv"};
 <div class="main-menu">
 
   <ul id="nav">
-               <li class="first"><a href="w00/Syllabus.pdf" target="popup" 
+               <<li class="first"><a href="w00/Syllabus.pdf" target="popup" 
                 onclick="window.open('w00/Syllabus.pdf','name','width=900,height=500')"><font color = "#365060">Syllabus</font></a></li>
                          
                <li><a href=""><font color = "#365060">Rubrics</font><span class="a-inner"></span></a> 
@@ -72,9 +72,12 @@ var sgr_main = {"sgr_site_key":"6LcmTAcaAAAAAEELVElChVbNtpYH8TxjxPvYq9gv"};
                      
                  <li><a href=""><font color = "#365060">Office Hours</font><span class="a-inner"></span></a> 
                         <!-- Drop-down manual-->
-                         <div><ul>        
-                          <li class="navitem active"><center><b>Tuesday</b> <br><font size=2 color="purple">3:00PM-5:00PM </font></center></li> 
-                          <li class="navitem active"><center><b>Thursday</b> <br><font size=2 color="purple">3:00PM-5:00AM</font></center></li>
+                        <div><ul>        
+                          <li class="navitem active"><center><b>Tuesday</b> <br><font size=2 color="purple">2:00PM-3:00PM </font></center></li>
+                            
+                          <li class="navitem active"><center><b>Wednesday</b> <br> <font size=2 color="purple">1:30PM-3:30PM <br>(Zoom Only!)</font></center></li>
+                            
+                          <li class="navitem active"><center><b>Thursday</b> <br><font size=2 color="purple">2:00PM-5:00AM</font></center></li>
                             </ul>
                         </div></li>
                      
@@ -161,77 +164,57 @@ var sgr_main = {"sgr_site_key":"6LcmTAcaAAAAAEELVElChVbNtpYH8TxjxPvYq9gv"};
           <!--h2>Part One: Strategies and Tools for Effective Communication </h2>
       <!--div class="hr hr-wide gap-big"> </div-->
     <!--div class="item-blog"-->
-    <h3><a id="w05"> 5.   Visualizing Spatial Information Using Map in R</a></h3>
+    <h3><a id="w06"> 6. More R Maps and Case Study </a></h3>
         
     <!--div class="entry-meta">
         <span class="ico-link date"><span>September 23, 2023</span></span><span class="ico-link author"><a href="">Cheng Peng</a></span>
     </div-->
         
-     <h5>Topics and Notes</h5>
-        <ol style="line-height: 1.5em; margin-bottom: 15px">
+   <h5>Topics and Notes</h5>
+        <ol style="line-height: 1.5em; margin-bottom: 15px">    
             
-<li> Overview: Visualize and Use Spatial Information</li>
-    <ul>
-       <li>a. Less technical overview of spatial data visualization
-        <a href="w05/map-cards-new.html" target="popup" 
-                          onclick="window.open('w05/map-cards-new.html', 'name','width=900,height=500')">
-                         <link-btn> HTML Reference Card</link-btn></a>
-       </li>
-       <li> b. Little more technical overview on using geoinfo for data visualization
-        <a href="w05/map-cards.html" target="popup" 
-                          onclick="window.open('w05/map-cards.html', 'name','width=900,height=500')">
-                         <link-btn> HTML Reference Card</link-btn></a>
-       </li>
-    </ul>
- <li>Primary lecture note on spatial data visualization
-    <a href="w05/maps.html" target="popup" 
-                          onclick="window.open('w05/maps.html', 'name','width=900,height=500')">
-                         <link-btn> HTML Lecture Note</link-btn></a>
-   </li>           
- <li> Various R Interactive Map Libraries 
-            <a href="w05/w07-IntroRMapsNewVersion.html" target="popup" 
-                          onclick="window.open('w05/w07-IntroRMapsNewVersion.html', 'name','width=900,height=500')">
-                         <link-btn> HTML</link-btn></a> 
-            </li>
-    <ul>
-       <li>a. Basic types of maps: choropleth and scatter map
-       <li>b. R map libraries
-       <li>c. Choropleth map for aggregated data
-       <li>d. Scatter map for individual-level data
+    <li> Choropleth and Scatter Maps with Mapview() </li>
+          <ul>
+               <li>a. Choropleth Maps 
+                   <a href="w06/w08-MapviewMaps-ChoroplethMap.html" target="popup" 
+                          onclick="window.open('w06/w08-MapviewMaps-ChoroplethMap.html', 'name','width=900,height=500')">
+                         <link-btn> HTML</link-btn></a>
+                        
+               <li>b. Scatter Maps 
+                   <a href="w06/w08-MapviewMaps-ScatterMap.html" target="popup" 
+                          onclick="window.open('w06/w08-MapviewMaps-ScatterMap.html', 'name','width=900,height=500')">
+                        <link-btn> HTML</link-btn></a> 
+                        
+       </ul>                    
+                 
+   <li> Interactive maps- a case study 
+          <a href="https://rpubs.com/cpeng/1161702" target="popup" 
+                          onclick="window.open('https://rpubs.com/cpeng/1161702', 'name','width=900,height=500')">
+                         <link-btn> HTML (on RPubs)</link-btn></a> 
+                         
+     <ul>
+        <li>a. Shapefile and map boundary
+        <li>b. Process of visual design
+        <li>c. Design considerations
     </ul>                           
- 
-    <li> Case-Study: Regression analysis with housing prices:
-        <a href="w05/Map-case-study.html" target="popup" 
-                          onclick="window.open('w05/Map-case-study.html', 'name','width=900,height=500')">
-                         <link-btn> HTML</link-btn></a> 
-            </li>                          
- 
+          
+            
   </ol>
         
-<h5>Assignments</h5>     
-     <ul>    
-    <li><font color = "blue"><b>Part II and Finalization of Project #2</b></font></li>
-    </ul> 
-
+<h5>Assignments: <font color = "red">(optional bonus project)</font> </h5>     
+        
   <ol>
-     <li>Perform related visual exploratory analysis tasks, including identifying spatial patterns and relationships </li>       
-      <ul>
-          <li>a. Data inspection, including identifying missing values and distributional patterns of individual variables.</li>
-          <li>b. Relationship analysis between spatial and non-spatial variables.</li>
-          <li>c. Assessing whether spatial patterns help in defining new variables or improving existing ones.</li>
-      </ul>
-      <li> Take appropriate steps to create the analytic dataset for subsequent analysis.</li>
-      <li> Identify a practically meaningful response variable and perform regression analysis to determine the factors influencing that response variable.</li>
-      <!--li><a href="https://pengdsci.github.io/STA553VIZ/w08/PhillyCrimeSince2015.csv"> <b>Philly Crime Data (2015-2024)</b>[link]</a>: This is longitudinal data that contains crime cases since 2015. Use this data to do the following:</li>
-      <uL>
-          <li>a. o	a. Use appropriate R string functions to extract information of <b>year</b> from the variable <b>date</b> and then add the new variable <b>year</b> to the data set.</li>
-          <li>b. Create a subset containing only 2023 data.</li>
-          <li>c. Choose a map library to make an interactive map to plot crime locations and use different colors to label fatal and non-fatal crimes.</li>
-          <li>d. Add relevant information such as title and annotations to the map. </li>
-          <li>e. Include other important information in the hover message box.</li>
-      </uL-->
+     <li><font color = "red"><b>[Optional]: </b></font>creating a reference map using the Philly Shooting data set (see details in the case study). </li>
       
-     <b>Assignment Due:<font color = "red"> <b>Sunday, 11:30 PM </b></font></b>
+      <li><font color = "red"><b>[Optional]: </b></font> creating a choropleth map <b>Data sets</b>: <font color = "red">|</font><a href = "https://pengdsci.github.io/datasets/countypresidential_election_2000-2020.csv"> Presidential Election Data</a><font color = "red">|</font> <a href="https://pengdsci.github.io/datasets/fips2geocode.csv"> FIPS to Geocode</a><font color = "red">|</font></li> 
+        <ul>
+           <li>a. Extract on 2020 presidential election data: <font color = "blue">year</font></li> 
+           <li>b. Only include Democrats and Republican votes: <font color = "blue">party</font></li>
+           <li>c. Include variables: state_po, county_name, county_fips, party, candidatevotes</li>
+           <li>d. Merge the above data with <font color = "blue"> FIPS to Geocode Data</font>using the FIPS as the primary key.</li>
+           <li>e. Create an interactive choropleth map to display the presidential election results at the county level using two different colors to represent the two parties. You can choose any R library to accomplish this part of the assignment.</li>
+      </ul>
+
   </ol> 
        
         
