@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plotly layout() R Reference Cards</title>
+    
+    <!-- MathJax for formula rendering -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CORE COLOR: purple #6E3061 with accessibility contrast */
+        body {
+            background-color: #512d6d;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+            transition: background-color 0.25s ease, color 0.2s ease;
+        }
+
+        /* main container – printable, max-width for readability */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            transition: background 0.2s;
+        }
+
+        /* header area with purple brand */
+        .header {
+            background: #6E3061;
+            padding: 1.0rem 1.0rem;
+            color: white;
+            border-bottom: 4px solid #ffd966;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h2 {
+            font-size: 2.0rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.35rem;
+            opacity: 0.92;
+            font-weight: 500;
+            border-left: 3px solid #ffd966;
+            padding-left: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        /* toolbar: toggle + print + size hints */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            background: #f9f4f7;
+            border-bottom: 1px solid #e2d0dc;
+            align-items: center;
+        }
+
+        .btn {
+            background: white;
+            border: 1px solid #c2a8bd;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2d2a2c;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn:hover {
+            background: #e9dce5;
+            border-color: #6E3061;
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: #6E3061;
+            border-color: #4f2444;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #4f2444;
+        }
+
+        /* CARDS GRID: two per row on desktop, responsive */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.8rem;
+            padding: 2rem 2rem;
+        }
+
+        /* responsive: on narrow screens, single column */
+        @media (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+
+        /* reference card style */
+        .card {
+            background: #fefcff;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(110, 48, 97, 0.2);
+            transition: all 0.2s;
+            border: 1px solid #ecdde6;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-header {
+            background: #6E3061;
+            padding: 1rem 1.4rem;
+            border-bottom: 2px solid #dbbdce;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .card-header span {
+            background: rgba(255,255,255,0.15);
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: normal;
+            font-family: monospace;
+        }
+        .card-body {
+            padding: 1.3rem 1.4rem 1.6rem;
+            flex: 1;
+        }
+        .formula-block {
+            background: #f5f0f3;
+            padding: 0.9rem;
+            border-radius: 18px;
+            margin: 0.8rem 0;
+            font-size: 1rem;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        .r-code {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 0.8rem 0;
+            font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.6;
+        }
+
+        .check-row {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+            gap: 0.7rem;
+            border-top: 1px dashed #e2d0dc;
+            padding-top: 0.8rem;
+            font-size: 0.85rem;
+        }
+        .check-row input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #6E3061;
+        }
+        .badge {
+            background: #e2d0dc;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        .r-func-list {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0;
+        }
+        .r-func-list li {
+            padding: 0.25rem 0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+        }
+        .r-func-list li::before {
+            content: "▸ ";
+            color: #6E3061;
+            font-weight: bold;
+        }
+
+        footer {
+            background: #f3eaf0;
+            padding: 1.2rem 2rem;
+            font-size: 0.8rem;
+            color: #3f2d38;
+            border-top: 1px solid #e1cfda;
+            /* display: flex; */
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        /* Dark mode overrides */
+        body.dark {
+            background-color: #2c1a27;
+        }
+        body.dark .container {
+            background: #1f1a1d;
+        }
+        body.dark .card {
+            background: #2b2428;
+            border-color: #4d3a44;
+        }
+        body.dark .card-header {
+            background: #6E3061;
+            color: white;
+            border-bottom-color: #6E3061;
+        }
+        body.dark .card-body {
+            color: #efeaed;
+        }
+        body.dark .formula-block {
+            background: #3a2e35;
+            color: #f3e6ef;
+        }
+        body.dark .r-code {
+            background: #0e181c;
+            color: #bbd4f0;
+        }
+        body.dark .toolbar {
+            background: #2a2126;
+            border-bottom-color: #4b3942;
+        }
+        body.dark .btn {
+            background: #3f2f37;
+            border-color: #6E3061;
+            color: #f0e3ea;
+        }
+        body.dark .btn-primary {
+            background: #6E3061;
+            color: white;
+        }
+        body.dark footer {
+            background: #2c2228;
+            color: #cfc1ca;
+            border-top-color: #4a3842;
+        }
+        body.dark .badge {
+            background: #4a3842;
+        }
+        body.dark .r-func-list li::before {
+            color: #bb90b0;
+        }
+
+        /* Print styles: A3 & Letter support */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            body.dark .container, .container {
+                background: white;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .toolbar {
+                display: none;
+            }
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            .check-row input[type="checkbox"] {
+                opacity: 1;
+                border: 1px solid black;
+            }
+            footer {
+                background: #f5f5f5;
+                color: black;
+            }
+            .btn, .toolbar .btn {
+                display: none;
+            }
+            body.dark .card-header, body.dark .card-body {
+                color: black;
+                background: #fff;
+            }
+            body.dark .r-code {
+                background: #f0f0f0;
+                color: #1e1e1e;
+                border: 1px solid #aaa;
+            }
+            .formula-block {
+                background: #f7f7f7;
+            }
+            @page {
+                size: A3;
+            }
+            @page letter {
+                size: letter;
+            }
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        @media print and (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        .site-meter {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>STA 553 Data Visualization</h1>
+            <h2>📊 Creating Plotly layout() in R: Comprehensive Reference</h2>
+            <div class="subtitle">Customize axes, legends, annotations, shapes &amp; interactive controls with <code>layout()</code></div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <button class="btn" onclick="window.print()" title="Print or Save as PDF">🖨️ Print / PDF</button>
+            <button class="btn btn-primary" id="darkToggle" onclick="toggleDarkMode()">🌙 Dark Mode</button>
+            <!--span class="badge" style="font-size:0.75rem;">📄 A3 / Letter</span-->
+        </div>
+
+        <!-- CARDS GRID -->
+        <div class="cards-grid">
+
+            <!-- CARD 1: Title & Fonts -->
+            <div class="card">
+                <div class="card-header">
+                    🏷️ Title &amp; Fonts
+                    <span>layout()</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Set main title and global font:</strong></p>
+                    <div class="r-code">layout(
+  title = list(
+    text = <span style="color:#ce9178;">"Plot Title"</span>,
+    font = list(
+      family = <span style="color:#ce9178;">"Arial"</span>, 
+      size = 24, 
+      color = <span style="color:#ce9178;">"black"</span>),
+    x = 0.5, y = 0.95,
+    xanchor = <span style="color:#ce9178;">"center"</span>,
+    yanchor = <span style="color:#ce9178;">"top"</span>
+  ),
+  font = list(
+    family = <span style="color:#ce9178;">"Arial, sans-serif"</span>,
+    size = 14,
+    color = <span style="color:#ce9178;">"#333333"</span>
+  )
+)</div>
+                    <p style="margin-top:0.5rem;">Title position formula (paper coordinates):</p>
+                    <div class="formula-block">
+                        $$x \in [0,1],\quad y \in [0,1]$$
+                        $$\text{Center: } x=0.5,\; \text{yanchor}=\text{"top"}$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c1" checked>
+                        <label for="c1">Title centered at top</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: Axes Customization -->
+            <div class="card">
+                <div class="card-header">
+                    📏 Axes Customization
+                    <span>xaxis / yaxis</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Axis type, range, ticks:</strong></p>
+                    <div class="r-code">layout(
+  xaxis = list(
+    title = <span style="color:#ce9178;">"X Axis Label"</span>,
+    range = c(0, 100),
+    type = <span style="color:#ce9178;">"linear"</span>,
+    tickmode = <span style="color:#ce9178;">"linear"</span>,
+    tick0 = 0, dtick = 20,
+    tickangle = -45,
+    showgrid = TRUE,
+    gridcolor = <span style="color:#ce9178;">"#e5e5e5"</span>,
+    zeroline = TRUE,
+    showline = TRUE,
+    mirror = TRUE,
+    side = <span style="color:#ce9178;">"bottom"</span>
+  ),
+  yaxis = list(...)
+)</div>
+                    <p style="margin-top:0.5rem;">Axis types: <code>"linear"</code> | <code>"log"</code> | <code>"date"</code> | <code>"category"</code></p>
+                    <div class="formula-block">
+                        $$\text{tick positions} = \text{tick0} + k \times \text{dtick},\; k \in \mathbb{Z}$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c2">
+                        <label for="c2">Grid + mirror lines enabled</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: Secondary Axes -->
+            <div class="card">
+                <div class="card-header">
+                    🔄 Secondary Axes
+                    <span>xaxis2 / yaxis2</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Overlay secondary axes:</strong></p>
+                    <div class="r-code">layout(
+  xaxis2 = list(
+    overlaying = <span style="color:#ce9178;">"x"</span>,
+    side = <span style="color:#ce9178;">"top"</span>,
+    title = <span style="color:#ce9178;">"Secondary X Axis"</span>
+  ),
+  yaxis2 = list(
+    overlaying = <span style="color:#ce9178;">"y"</span>,
+    side = <span style="color:#ce9178;">"right"</span>,
+    title = <span style="color:#ce9178;">"Secondary Y Axis"</span>
+  )
+)</div>
+                    <p><strong>Key R functions:</strong></p>
+                    <ul class="r-func-list">
+                        <li>plot_ly() – add traces with yaxis = "y2"</li>
+                        <li>add_trace() – assign to secondary axis</li>
+                        <li>subplot() – multiple plots with shared axes</li>
+                    </ul>
+                    <div class="formula-block">
+                        $$\text{yaxis2 range mapped independently: } [y_{\min2},\; y_{\max2}]$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c3">
+                        <label for="c3">Dual y-axes configured</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4: Legend -->
+            <div class="card">
+                <div class="card-header">
+                    📖 Legend
+                    <span>legend</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Position, orientation, interaction:</strong></p>
+                    <div class="r-code">layout(
+  showlegend = TRUE,
+  legend = list(
+    title = list(text = <span style="color:#ce9178;">"Legend"</span>),
+    x = 1.02, y = 1,
+    xanchor = <span style="color:#ce9178;">"left"</span>,
+    yanchor = <span style="color:#ce9178;">"top"</span>,
+    orientation = <span style="color:#ce9178;">"v"</span>,
+    traceorder = <span style="color:#ce9178;">"normal"</span>,
+    bgcolor = <span style="color:#ce9178;">"rgba(255,255,255,0.8)"</span>,
+    bordercolor = <span style="color:#ce9178;">"black"</span>,
+    borderwidth = 1,
+    itemclick = <span style="color:#ce9178;">"toggle"</span>,
+    itemdoubleclick = <span style="color:#ce9178;">"toggleothers"</span>
+  )
+)</div>
+                    <div class="formula-block">
+                        $$\text{Legend position: } (x,y) \text{ in paper coords, } x>1 \text{ = outside}$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c4" checked>
+                        <label for="c4">Interactive legend (toggle on click)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 5: Margins & Size -->
+            <div class="card">
+                <div class="card-header">
+                    📐 Margins &amp; Size
+                    <span>margin / width / height</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Control plot dimensions:</strong></p>
+                    <div class="r-code">layout(
+  margin = list(
+    l = 80, r = 80,
+    t = 100, b = 80,
+    pad = 4,
+    autoexpand = TRUE
+  ),
+  width = 800,
+  height = 600,
+  autosize = TRUE
+)</div>
+                    <div class="formula-block">
+                        $$\text{Total width} = \text{margin.l} + \text{plot area} + \text{margin.r}$$
+                        $$\text{All units in pixels (px)}$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c5">
+                        <label for="c5">Custom margins set</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 6: Hover Labels -->
+            <div class="card">
+                <div class="card-header">
+                    🖱️ Hover Labels
+                    <span>hoverlabel / hovermode</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Customize tooltip appearance:</strong></p>
+                    <div class="r-code">layout(
+  hovermode = <span style="color:#ce9178;">"closest"</span>,
+  hoverlabel = list(
+    font = list(
+      size = 13,
+      color = <span style="color:#ce9178;">"white"</span>,
+      family = <span style="color:#ce9178;">"Arial"</span>),
+    bgcolor = <span style="color:#ce9178;">"rgba(0,0,0,0.8)"</span>,
+    bordercolor = <span style="color:#ce9178;">"white"</span>,
+    namelength = -1,
+    align = <span style="color:#ce9178;">"left"</span>
+  ),
+  hoverdistance = 20,
+  spikedistance = 20,
+  clickmode = <span style="color:#ce9178;">"event+select"</span>
+)</div>
+                    <p>Hover modes: <code>"x"</code> | <code>"y"</code> | <code>"closest"</code> | <code>"x unified"</code> | <code>"y unified"</code> | <code>FALSE</code></p>
+                    <div class="check-row">
+                        <input type="checkbox" id="c6" checked>
+                        <label for="c6">Unified hover across traces</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 7: Shapes & Lines -->
+            <div class="card">
+                <div class="card-header">
+                    🔷 Shapes &amp; Lines
+                    <span>shapes</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Add reference lines, rectangles, circles:</strong></p>
+                    <div class="r-code">layout(
+  shapes = list(
+    list(type = <span style="color:#ce9178;">"line"</span>,
+      x0 = 0, x1 = 1, xref = <span style="color:#ce9178;">"paper"</span>,
+      y0 = 50, y1 = 50, yref = <span style="color:#ce9178;">"y"</span>,
+      line = list(color = <span style="color:#ce9178;">"red"</span>, 
+                  width = 2, dash = <span style="color:#ce9178;">"dash"</span>)),
+    list(type = <span style="color:#ce9178;">"rect"</span>,
+      x0 = 2, x1 = 8, y0 = 10, y1 = 50,
+      fillcolor = <span style="color:#ce9178;">"rgba(0,100,255,0.1)"</span>,
+      line = list(width = 0))
+  )
+)</div>
+                    <p>Reference types: <code>"x"</code> | <code>"y"</code> | <code>"paper"</code> | <code>"x domain"</code></p>
+                    <div class="check-row">
+                        <input type="checkbox" id="c7">
+                        <label for="c7">Horizontal reference line added</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 8: Annotations -->
+            <div class="card">
+                <div class="card-header">
+                    ✏️ Annotations
+                    <span>annotations</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Add text labels with arrows:</strong></p>
+                    <div class="r-code">layout(
+  annotations = list(
+    list(
+      text = <span style="color:#ce9178;">"Important Point"</span>,
+      x = 5, y = 50,
+      xref = <span style="color:#ce9178;">"x"</span>, 
+      yref = <span style="color:#ce9178;">"y"</span>,
+      showarrow = TRUE,
+      arrowhead = 2,
+      arrowsize = 1.5,
+      arrowwidth = 2,
+      arrowcolor = <span style="color:#ce9178;">"red"</span>,
+      ax = 20, ay = -30,
+      font = list(
+        size = 12, 
+        color = <span style="color:#ce9178;">"red"</span>),
+      bgcolor = <span style="color:#ce9178;">"rgba(255,255,255,0.8)"</span>,
+      bordercolor = <span style="color:#ce9178;">"red"</span>,
+      borderwidth = 1, borderpad = 4,
+      xanchor = <span style="color:#ce9178;">"center"</span>,
+      yanchor = <span style="color:#ce9178;">"bottom"</span>
+    )
+  )
+)</div>
+                    <div class="formula-block">
+                        $$\text{Arrow offset: } (ax, ay) \text{ in pixels from point } (x,y)$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c8">
+                        <label for="c8">Annotated key data point</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 9: Images & Logos -->
+            <div class="card">
+                <div class="card-header">
+                    🖼️ Images &amp; Logos
+                    <span>images</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Embed background/foreground images:</strong></p>
+                    <div class="r-code">layout(
+  images = list(
+    list(
+      source = <span style="color:#ce9178;">"https://example.com/logo.png"</span>,
+      xref = <span style="color:#ce9178;">"paper"</span>,
+      yref = <span style="color:#ce9178;">"paper"</span>,
+      x = 1.05, y = 1.02,
+      sizex = 0.15, sizey = 0.15,
+      xanchor = <span style="color:#ce9178;">"right"</span>,
+      yanchor = <span style="color:#ce9178;">"top"</span>,
+      opacity = 0.8,
+      layer = <span style="color:#ce9178;">"above"</span>
+    )
+  )
+)</div>
+                    <div class="formula-block">
+                        $$\text{Size in paper coords: sizex, sizey } \in [0,1]$$
+                        $$\text{Layer: "above" | "below"}$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c9">
+                        <label for="c9">Logo positioned top-right</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 10: Colors & Themes -->
+            <div class="card">
+                <div class="card-header">
+                    🎨 Colors &amp; Themes
+                    <span>template / colorway</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Built-in templates and color scales:</strong></p>
+                    <div class="r-code">layout(
+  plot_bgcolor = <span style="color:#ce9178;">"#f8f9fa"</span>,
+  paper_bgcolor = <span style="color:#ce9178;">"white"</span>,
+  colorway = c(<span style="color:#ce9178;">"#636EFA"</span>, <span style="color:#ce9178;">"#EF553B"</span>, 
+              <span style="color:#ce9178;">"#00CC96"</span>, <span style="color:#ce9178;">"#AB63FA"</span>),
+  coloraxis = list(
+    colorscale = <span style="color:#ce9178;">"Viridis"</span>,
+    colorbar = list(
+      title = <span style="color:#ce9178;">"Scale"</span>,
+      len = 0.75, thickness = 20)
+  ),
+  template = <span style="color:#ce9178;">"plotly_dark"</span>
+)</div>
+                    <p>Templates: <code>"ggplot2"</code> | <code>"plotly_white"</code> | <code>"seaborn"</code> | <code>"plotly_dark"</code> | <code>"presentation"</code></p>
+                    <div class="check-row">
+                        <input type="checkbox" id="c10" checked>
+                        <label for="c10">Custom colorway applied</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 11: Sliders & Selectors -->
+            <div class="card">
+                <div class="card-header">
+                    🎚️ Sliders &amp; Selectors
+                    <span>rangeslider / rangeselector</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Range slider and time selector:</strong></p>
+                    <div class="r-code">layout(
+  xaxis = list(
+    rangeslider = list(
+      visible = TRUE,
+      thickness = 0.05,
+      bgcolor = <span style="color:#ce9178;">"#f0f0f0"</span>,
+      borderwidth = 1
+    ),
+    rangeselector = list(
+      buttons = list(
+        list(count = 1, label = <span style="color:#ce9178;">"1m"</span>,
+             step = <span style="color:#ce9178;">"month"</span>,
+             stepmode = <span style="color:#ce9178;">"backward"</span>),
+        list(count = 6, label = <span style="color:#ce9178;">"6m"</span>,
+             step = <span style="color:#ce9178;">"month"</span>,
+             stepmode = <span style="color:#ce9178;">"backward"</span>),
+        list(step = <span style="color:#ce9178;">"all"</span>, 
+             label = <span style="color:#ce9178;">"All"</span>)
+      )
+    )
+  )
+)</div>
+                    <p>Key R function: <code>plot_ly() %&gt;% layout()</code> with time-series data</p>
+                    <div class="check-row">
+                        <input type="checkbox" id="c11">
+                        <label for="c11">Range slider visible</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 12: Dropdowns & Buttons -->
+            <div class="card">
+                <div class="card-header">
+                    🔘 Dropdowns &amp; Buttons
+                    <span>updatemenus</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Interactive controls for relayout:</strong></p>
+                    <div class="r-code">layout(
+  updatemenus = list(
+    list(
+      type = <span style="color:#ce9178;">"buttons"</span>,
+      direction = <span style="color:#ce9178;">"right"</span>,
+      x = 1.05, y = 1.1,
+      xanchor = <span style="color:#ce9178;">"left"</span>,
+      yanchor = <span style="color:#ce9178;">"top"</span>,
+      buttons = list(
+        list(
+          label = <span style="color:#ce9178;">"Log Scale"</span>,
+          method = <span style="color:#ce9178;">"relayout"</span>,
+          args = list(
+            list(yaxis = list(type = <span style="color:#ce9178;">"log"</span>)))
+        ),
+        list(
+          label = <span style="color:#ce9178;">"Linear Scale"</span>,
+          method = <span style="color:#ce9178;">"relayout"</span>,
+          args = list(
+            list(yaxis = list(type = <span style="color:#ce9178;">"linear"</span>)))
+        )
+      )
+    )
+  )
+)</div>
+                    <div class="formula-block">
+                        $$\text{Method: "relayout" | "update" | "animate"}$$
+                        $$\text{Type: "buttons" | "dropdown"}$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c12">
+                        <label for="c12">Scale toggle buttons added</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 13: Subplots Grid -->
+            <div class="card">
+                <div class="card-header">
+                    🧩 Subplots Grid
+                    <span>subplot()</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Combine multiple plots:</strong></p>
+                    <div class="r-code"><span style="color:#6a9955;"># Key R function: subplot()</span>
+subplot(p1, p2, p3, p4,
+  nrows = 2,
+  shareX = TRUE,
+  shareY = TRUE,
+  titleX = TRUE,
+  titleY = TRUE,
+  heights = c(0.6, 0.4),
+  widths = c(0.5, 0.5)
+) %&gt;%
+  layout(
+    annotations = list(
+      list(x = 0.2, y = 1.02,
+        text = <span style="color:#ce9178;">"Panel A"</span>,
+        xref = <span style="color:#ce9178;">"paper"</span>,
+        yref = <span style="color:#ce9178;">"paper"</span>,
+        showarrow = FALSE)
+    )
+  )</div>
+                    <div class="formula-block">
+                        $$\text{Total subplots} = n_{\text{rows}} \times n_{\text{cols}}$$
+                        $$\sum \text{heights} = 1,\; \sum \text{widths} = 1$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c13">
+                        <label for="c13">2×2 grid with shared axes</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 14: Publication-Ready Theme -->
+            <div class="card">
+                <div class="card-header">
+                    📝 Publication-Ready Theme
+                    <span>Clean layout template</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Minimal, clean layout for publications:</strong></p>
+                    <div class="r-code">layout(
+  font = list(
+    family = <span style="color:#ce9178;">"serif"</span>, 
+    size = 12),
+  plot_bgcolor = <span style="color:#ce9178;">"white"</span>,
+  paper_bgcolor = <span style="color:#ce9178;">"white"</span>,
+  xaxis = list(
+    showgrid = TRUE,
+    gridcolor = <span style="color:#ce9178;">"lightgray"</span>,
+    showline = TRUE,
+    linecolor = <span style="color:#ce9178;">"black"</span>,
+    mirror = TRUE
+  ),
+  yaxis = list(
+    showgrid = TRUE,
+    gridcolor = <span style="color:#ce9178;">"lightgray"</span>,
+    showline = TRUE,
+    linecolor = <span style="color:#ce9178;">"black"</span>,
+    mirror = TRUE
+  ),
+  legend = list(
+    bgcolor = <span style="color:#ce9178;">"rgba(255,255,255,0)"</span>,
+    borderwidth = 0
+  )
+)</div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c14" checked>
+                        <label for="c14">Serif font, minimal grid</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 15: Axis Reference Types -->
+            <div class="card">
+                <div class="card-header">
+                    📌 Axis Reference Types
+                    <span>xref / yref</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Reference coordinate systems:</strong></p>
+                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem; margin:0.5rem 0;">
+                        <tr style="background:#91728bf9;"><th style="padding:0.4rem; text-align:left;">xref / yref</th><th style="padding:0.4rem; text-align:left;">Description</th></tr>
+                        <tr><td style="padding:0.3rem;"><code>"x" / "y"</code></td><td style="padding:0.3rem;">Data coordinates on primary axis</td></tr>
+                        <tr><td style="padding:0.3rem;"><code>"x2" / "y2"</code></td><td style="padding:0.3rem;">Secondary axis data coordinates</td></tr>
+                        <tr><td style="padding:0.3rem;"><code>"paper"</code></td><td style="padding:0.3rem;">0–1 relative to entire figure</td></tr>
+                        <tr><td style="padding:0.3rem;"><code>"x domain"</code></td><td style="padding:0.3rem;">0–1 within axis domain (subplots)</td></tr>
+                    </table>
+                    <div class="formula-block">
+                        $$\text{paper: } (0,0) = \text{bottom-left},\; (1,1) = \text{top-right}$$
+                        $$\text{domain: } (0,0) = \text{axis origin},\; (1,1) = \text{axis end}$$
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="c15">
+                        <label for="c15">Reference types understood</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 16: Essential R Functions -->
+            <div class="card">
+                <div class="card-header">
+                    🧪 Essential R Functions
+                    <span>plotly package</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Core plotly R workflow:</strong></p>
+                    <div class="r-code"><span style="color:#6a9955;"># Create plot</span>
+plot_ly(data, x = ~x, y = ~y, 
+        type = <span style="color:#ce9178;">"scatter"</span>, 
+        mode = <span style="color:#ce9178;">"lines+markers"</span>)
+
+<span style="color:#6a9955;"># Add traces</span>
+add_trace(p, x = ~x2, y = ~y2, 
+          yaxis = <span style="color:#ce9178;">"y2"</span>)
+
+<span style="color:#6a9955;"># Apply layout</span>
+layout(p, title = <span style="color:#ce9178;">"My Plot"</span>)
+
+<span style="color:#6a9955;"># Pipe syntax</span>
+plot_ly(...) %&gt;%
+  add_trace(...) %&gt;%
+  layout(...)
+
+<span style="color:#6a9955;"># ggplotly conversion</span>
+ggplotly(ggplot_object) %&gt;%
+  layout(...)</div>
+                    <ul class="r-func-list">
+                        <li><strong>plot_ly()</strong> – initialize plot</li>
+                        <li><strong>add_trace()</strong> – add data layers</li>
+                        <li><strong>layout()</strong> – customize everything</li>
+                        <li><strong>subplot()</strong> – combine plots</li>
+                        <li><strong>ggplotly()</strong> – convert ggplot2</li>
+                        <li><strong>style()</strong> – modify trace properties</li>
+                        <li><strong>config()</strong> – control modebar</li>
+                        <li><strong>animation_opts()</strong> – animation settings</li>
+                    </ul>
+                    <div class="check-row">
+                        <input type="checkbox" id="c16" checked>
+                        <label for="c16">Pipe workflow mastered</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <div>
+              <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+ 
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+    
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+        </div>
+ 
+        </footer>
+    </div>
+
+    
+    <script>
+         // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();  
+                 
+        // Dark mode toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            const btn = document.getElementById('darkToggle');
+            if (document.body.classList.contains('dark')) {
+                btn.textContent = '☀️ Light Mode';
+                btn.classList.add('btn-primary');
+            } else {
+                btn.textContent = '🌙 Dark Mode';
+                btn.classList.remove('btn-primary');
+            }
+            // Save preference
+            localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+        }
+
+        // Load dark mode preference
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark');
+                const btn = document.getElementById('darkToggle');
+                btn.textContent = '☀️ Light Mode';
+                btn.classList.add('btn-primary');
+            }
+        });
+
+        // Detect page size for footer
+        function updatePageSizeInfo() {
+            const width = window.innerWidth;
+            const pageSizeEl = document.getElementById('pageSize');
+            if (width >= 1120) {
+                pageSizeEl.textContent = 'A3 / Letter';
+            } else if (width >= 760) {
+                pageSizeEl.textContent = 'Letter';
+            } else {
+                pageSizeEl.textContent = 'Compact';
+            }
+        }
+        window.addEventListener('resize', updatePageSizeInfo);
+        updatePageSizeInfo();
+
+        // Track checkbox state in localStorage
+        document.querySelectorAll('.check-row input[type="checkbox"]').forEach((cb, idx) => {
+            const saved = localStorage.getItem('cardCheck_' + idx);
+            if (saved !== null) {
+                cb.checked = saved === 'true';
+            }
+            cb.addEventListener('change', () => {
+                localStorage.setItem('cardCheck_' + idx, cb.checked);
+            });
+        });
+
+        // Site meter counter (simple)
+        let visits = localStorage.getItem('siteVisits') || 0;
+        visits = parseInt(visits) + 1;
+        localStorage.setItem('siteVisits', visits);
+        document.getElementById('siteMeter').textContent = 
+            '📐 Printable PDF-ready | Visits: ' + visits;
+
+        console.log('✅ Plotly layout() R Reference Cards loaded successfully!');
+        console.log('📄 Print with Ctrl+P / Cmd+P — optimized for A3 and Letter');
+        console.log('🌙 Dark mode toggle available in toolbar');
+    </script>
+</body>
+</html>
