@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Tableau Maps: Choropleth & Scatter | Reference Cards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CORE COLOR: purple #6E3061 with accessibility contrast */
+        body {
+            background-color: #512d6d;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+            transition: background-color 0.25s ease, color 0.2s ease;
+        }
+
+        /* main container – printable, max-width for readability */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            transition: background 0.2s;
+        }
+
+        /* header area with purple brand */
+        .header {
+            background: #6E3061;
+            padding: 1.0rem 1.0rem;
+            color: white;
+            border-bottom: 4px solid #ffd966;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h2 {
+            font-size: 2.0rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.35rem;
+            opacity: 0.92;
+            font-weight: 500;
+            border-left: 3px solid #ffd966;
+            padding-left: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        /* toolbar: toggle + print + size hints */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            background: #f9f4f7;
+            border-bottom: 1px solid #e2d0dc;
+            align-items: center;
+        }
+
+        .btn {
+            background: white;
+            border: 1px solid #c2a8bd;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2d2a2c;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn:hover {
+            background: #e9dce5;
+            border-color: #6E3061;
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: #6E3061;
+            border-color: #4f2444;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #4f2444;
+        }
+
+        /* CARDS GRID: two per row on desktop, responsive */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.8rem;
+            padding: 2rem 2rem;
+        }
+
+        /* responsive: on narrow screens, single column */
+        @media (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+
+        /* reference card style */
+        .card {
+            background: #fefcff;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(110, 48, 97, 0.2);
+            transition: all 0.2s;
+            border: 1px solid #ecdde6;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-header {
+            background: #6E3061;
+            padding: 1rem 1.4rem;
+            border-bottom: 2px solid #dbbdce;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .card-header span {
+            background: rgba(255,255,240,0.2);
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: normal;
+            font-family: monospace;
+        }
+        .card-body {
+            padding: 1.3rem 1.4rem 1.6rem;
+            flex: 1;
+        }
+        .formula-block {
+            background: #f5f0f3;
+            padding: 0.9rem;
+            border-radius: 18px;
+            margin: 0.8rem 0;
+            font-size: 1rem;
+            overflow-x: auto;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+        .definition {
+            font-size: 0.98rem;
+            margin-bottom: 0.8rem;
+            border-left: 3px solid #6E3061;
+            padding-left: 0.8rem;
+        }
+        .check-row {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+            gap: 0.7rem;
+            border-top: 1px dashed #e2d0dc;
+            padding-top: 0.8rem;
+            font-size: 0.85rem;
+        }
+        .check-row input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #6E3061;
+        }
+        .badge {
+            background: #e2d0dc;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        footer {
+            background: #f3eaf0;
+            padding: 1.2rem 2rem;
+            font-size: 0.8rem;
+            color: #3f2d38;
+            border-top: 1px solid #e1cfda;
+            /*display: flex; */
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .footer-left, .footer-right {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .site-meter {
+            font-family: monospace;
+            background: #d9cbd4;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        /* Dark mode overrides */
+        body.dark {
+            background-color: #2c1a27;
+        }
+        body.dark .container {
+            background: #1f1a1d;
+        }
+        body.dark .card {
+            background: #2b2428;
+            border-color: #4d3a44;
+        }
+        body.dark .card-header {
+            background: #6E3061;
+            color: white;
+            border-bottom-color: #6E3061;
+        }
+        body.dark .card-body {
+            color: #efeaed;
+        }
+        body.dark .formula-block {
+            background: #3a2e35;
+            color: #f3e6ef;
+        }
+        body.dark .toolbar {
+            background: #2a2126;
+            border-bottom-color: #4b3942;
+        }
+        body.dark .btn {
+            background: #3f2f37;
+            border-color: #6E3061;
+            color: #f0e3ea;
+        }
+        body.dark .btn-primary {
+            background: #6E3061;
+            color: white;
+        }
+        body.dark footer {
+            background: #2c2228;
+            color: #cfc1ca;
+            border-top-color: #4a3842;
+        }
+        body.dark .badge {
+            background: #4a3842;
+        }
+        body.dark .site-meter {
+            background: #4a3842;
+            color: #e7dae2;
+        }
+        body.dark .definition {
+            border-left-color: #c97eb3;
+        }
+
+        /* print styles: A3 & Letter support */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            body.dark .container, .container {
+                background: white;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .toolbar {
+                display: none;
+            }
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            .check-row input {
+                opacity: 1;
+                border: 1px solid black;
+            }
+            footer {
+                background: #f5f5f5;
+                color: black;
+            }
+            .btn, .toolbar .btn {
+                display: none;
+            }
+            body.dark .card-header, body.dark .card-body {
+                color: black;
+                background: #fff;
+            }
+            body.dark .card-header {
+                background: #6E3061;
+                color: white;
+            }
+            body.dark .r-code {
+                background: #f0f0f0;
+                color: #1e1e1e;
+                border: 1px solid #aaa;
+            }
+            .formula-block {
+                background: #f7f7f7;
+                color: black;
+            }
+            @page {
+                size: A3;
+            }
+            @page letter {
+                size: letter;
+            }
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        @media print and (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        .print-hint {
+            font-size: 0.7rem;
+            color: #7a6372;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>STA 553 Data Visualization</h1>
+        <h2>📊 Tableau Maps: Choropleth · Scatter Maps</h2>
+        <div class="subtitle">🎯 Reference cards: concepts and step-by-step workflows</div>
+    </div>
+
+    <div class="toolbar">
+        <button class="btn" id="printBtn">📄 Print / Save as PDF</button>
+        <button class="btn btn-primary" id="darkModeToggle">🌓 Dark / Light Mode</button>
+        <!--div class="print-hint">🖨️ PDF: A3 / Letter via browser print</div-->
+    </div>
+
+    <div class="cards-grid">
+        <!-- CARD 1: Choropleth concept + formula -->
+        <div class="card">
+            <div class="card-header">
+                🗺️ Choropleth Map
+                <span>filled polygons</span>
+            </div>
+            <div class="card-body">
+                <div class="definition"><strong>📌 Concept:</strong> Geographic areas (states, counties) shaded based on a data measure or ratio. Ideal for rates, densities, or regional comparisons.</div>
+                <div class="formula-block">
+                    <strong>🔧 Key Steps (Tableau)</strong><br>
+                    1. Geographic role: set field (State/Country)<br>
+                    2. Double-click geo field → Marks → <strong>Filled Map</strong><br>
+                    3. Drag measure to Color (e.g., Profit)<br>
+                    4. Adjust palette & tooltips
+                </div>
+                <div class="formula-block">
+                    <strong>📐 Ratio Calculation (best practice)</strong><br>
+                    <code>SUM([Measure]) / SUM([Population]) * 1000</code> → per capita rate
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk1"> <label for="chk1">✔️ Understand: filled map + color by measure/ratio</label>
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk2"> <label for="chk2">✔️ Use Edit Locations for missing geocoding</label>
+                </div>
+                <div class="badge">⚡ tip: avoid raw totals; use normalized values</div>
+            </div>
+        </div>
+
+        <!-- CARD 2: Scatter (Symbol) Map concept + size/color logic -->
+        <div class="card">
+            <div class="card-header">
+                📍 Scatter / Symbol Map
+                <span>point distribution</span>
+            </div>
+            <div class="card-body">
+                <div class="definition"><strong>📌 Concept:</strong> Individual points (stores, events) plotted via lat/long. Point size or color encodes additional measures.</div>
+                <div class="formula-block">
+                    <strong>🧭 Build steps</strong><br>
+                    • Latitude → Rows, Longitude → Columns (or double-click)<br>
+                    • Marks: Circle / Shape<br>
+                    • Size → measure (e.g., Sales), Color → measure or category
+                </div>
+                <div class="formula-block">
+                    <strong>✍️ Custom Lat/Long field</strong><br>
+                    If Address exists, combine: <code>[Address]+", "+[City]+", "+[State]</code><br>
+                    Set geographic role to "Address"
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk3"> <label for="chk3">✔️ Place lat/long on Rows/Columns</label>
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk4"> <label for="chk4">✔️ Overlapping points → adjust transparency / clustering</label>
+                </div>
+                <div class="badge">💡 use dual axis with density layer for hot spots</div>
+            </div>
+        </div>
+
+        <!-- CARD 3: Choropleth – detailed formula & data prep -->
+        <div class="card">
+            <div class="card-header">
+                🧮 Choropleth: Formulas & Agg
+                <span>rate calculation</span>
+            </div>
+            <div class="card-body">
+                <div class="definition"><strong>✅ Rate / Density formula (calculated field)</strong></div>
+                <div class="formula-block">
+                    <code>SUM([Number of cases]) / SUM([Total population]) * 10000</code><br>
+                    → per 10,000 residents (adjust multiplier)
+                </div>
+                <div class="definition"><strong>📦 Tableau specific: Fixed Level of Detail</strong></div>
+                <div class="formula-block">
+                    <code>{ FIXED [State] : AVG([Population Density]) }</code>
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk5"> <label for="chk5">✔️ Always use ratio for area comparison</label>
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk6"> <label for="chk6">✔️ Color Stepped for discrete intervals</label>
+                </div>
+                <div class="badge">🎨 diverging color palettes for positive/negative change</div>
+            </div>
+        </div>
+
+        <!-- CARD 4: Scatter Map advanced (clustering & custom geocoding) -->
+        <div class="card">
+            <div class="card-header">
+                🔍 Advanced Scatter Map
+                <span>clusters & filters</span>
+            </div>
+            <div class="card-body">
+                <div class="definition"><strong>⚡ Clustering marks:</strong> On Marks card → dropdown → Cluster. Tableau groups proximate points.</div>
+                <div class="formula-block">
+                    <strong>🔄 Dual Axis: Symbol + Density Heatmap</strong><br>
+                    1. Duplicate longitude field (Ctrl+drag)<br>
+                    2. Dual Axis → synchronize axes<br>
+                    3. Change 2nd mark to Density (Hexbin)
+                </div>
+                <div class="definition"><strong>📍 Custom geocoding with Latitude/Longitude fields:</strong><br> If your dataset includes lat/lon numbers, drop them directly onto Rows/Columns, remove aggregation if needed.</div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk7"> <label for="chk7">✔️ Allow marks to overlap in Size menu</label>
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk8"> <label for="chk8">✔️ Filter null lat/long before mapping</label>
+                </div>
+                <div class="badge">🎯 Use Map Layers to turn off labels for clean point focus</div>
+            </div>
+        </div>
+
+        <!-- CARD 5: Reference - Background maps & Layers -->
+        <div class="card">
+            <div class="card-header">
+                🗺️ Map Layers & Styling
+                <span>cartography</span>
+            </div>
+            <div class="card-body">
+                <div class="definition"><strong>🌍 Background maps:</strong> Map → Background Maps → Normal / Dark / Streets / Off (for simple polygons).</div>
+                <div class="formula-block">
+                    <strong>🛠️ Map Layers panel:</strong><br>
+                    - Show map scale, zone & country borders<br>
+                    - Data Layer: demographic overlays (US only)<br>
+                    - Washout background: 0% to 100%
+                </div>
+                <div class="definition"><strong>💎 Custom WMS / Mapbox:</strong> Map → Background Maps → Map Services → Add.</div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk9"> <label for="chk9">✔️ Reduce background complexity for choropleth emphasis</label>
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk10"> <label for="chk10">✔️ Add label marks for city names via tooltip</label>
+                </div>
+                <div class="badge">📌 tip: duplicate map layers for label-only layer</div>
+            </div>
+        </div>
+
+        <!-- CARD 6: Performance & troubleshooting -->
+        <div class="card">
+            <div class="card-header">
+                🚀 Performance & Fixes
+                <span>extract & indexing</span>
+            </div>
+            <div class="card-body">
+                <div class="definition"><strong>⚙️ Speed up large datasets:</strong> Use Data Extract instead of live connection; apply spatial indexes.</div>
+                <div class="formula-block">
+                    <strong>🛡️ Missing geographic locations:</strong> Right-click geographic field → Edit Locations → match to Tableau's geocoding hierarchy.
+                </div>
+                <div class="definition"><strong>📌 Choropleth not showing? </strong> Ensure field has assigned geographic role and is a filled map type. For scatter map, verify lat/lon fields are numeric decimals.</div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk11"> <label for="chk11">✔️ Use Data Extract + Filters to reduce marks</label>
+                </div>
+                <div class="check-row">
+                    <input type="checkbox" id="chk12"> <label for="chk12">✔️ Check Tableau Online/Desktop map licensing (offline maps possible)</label>
+                </div>
+                <div class="badge">🔧 quick fix: change geographic role → reset if unrecog.</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+             <div>
+              <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+ 
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+    
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+        </div>
+    </footer>
+</div>
+
+<script>
+     // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();  
+
+    (function() {
+        // dark mode toggle
+        const toggleBtn = document.getElementById('darkModeToggle');
+        const bodyEl = document.body;
+        const STORAGE_KEY = 'tableau_maps_darkmode';
+        
+        function setDarkMode(isDark) {
+            if (isDark) {
+                bodyEl.classList.add('dark');
+            } else {
+                bodyEl.classList.remove('dark');
+            }
+            try {
+                localStorage.setItem(STORAGE_KEY, isDark ? 'dark' : 'light');
+            } catch(e) {}
+        }
+        
+        function loadDarkModePreference() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved === 'dark') {
+                setDarkMode(true);
+            } else if (saved === 'light') {
+                setDarkMode(false);
+            } else {
+                // check prefers-color-scheme?
+                const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                setDarkMode(prefersDark);
+            }
+        }
+        
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const currentlyDark = bodyEl.classList.contains('dark');
+                setDarkMode(!currentlyDark);
+            });
+        }
+        
+        // Print functionality: directly calls browser print, respects page size (A3/Letter by manual selection in print dialog)
+        const printBtn = document.getElementById('printBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', () => {
+                // optional: add small temporary class to ensure proper print layout but already in @media print.
+                window.print();
+            });
+        }
+        
+        // restore checkboxes state from localStorage? (optional but nice: persist checked state)
+        // We'll persist checkboxes across sessions for better review experience
+        function saveCheckboxStates() {
+            const checkboxes = document.querySelectorAll('.check-row input[type="checkbox"]');
+            const states = {};
+            checkboxes.forEach((cb, idx) => {
+                const id = cb.id || `chk_${idx}`;
+                states[id] = cb.checked;
+            });
+            localStorage.setItem('tableau_review_checkboxes', JSON.stringify(states));
+        }
+        
+        function loadCheckboxStates() {
+            const saved = localStorage.getItem('tableau_review_checkboxes');
+            if (!saved) return;
+            try {
+                const states = JSON.parse(saved);
+                const checkboxes = document.querySelectorAll('.check-row input[type="checkbox"]');
+                checkboxes.forEach((cb) => {
+                    const id = cb.id;
+                    if (id && states.hasOwnProperty(id)) {
+                        cb.checked = states[id];
+                    }
+                });
+            } catch(e) {}
+        }
+        
+        // attach event listeners to all checkboxes to persist
+        function bindCheckboxEvents() {
+            const checkboxes = document.querySelectorAll('.check-row input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    saveCheckboxStates();
+                });
+            });
+        }
+        
+        // optional: custom page size hint but user will choose A3/letter manually
+        // Ensure printed layout respects two columns. print media already uses grid.
+        loadDarkModePreference();
+        loadCheckboxStates();
+        bindCheckboxEvents();
+        
+        // minor: support for A3/Letter text suggestion in footer or toolbar?
+        const toolbarDiv = document.querySelector('.toolbar');
+        if (toolbarDiv && !document.querySelector('.page-size-tip')) {
+            const tipSpan = document.createElement('span');
+            tipSpan.className = 'print-hint';
+            tipSpan.style.marginRight = 'auto';
+            tipSpan.innerHTML = '';
+            toolbarDiv.insertBefore(tipSpan, toolbarDiv.firstChild);
+        }
+        
+        // Additional: make sure layout inside cards is consistent and non-breaking on print.
+        // Also adjust card heights fluidly
+        console.log('Tableau Maps reference cards ready — checklists saved & darkmode active');
+    })();
+</script>
+</body>
+</html>

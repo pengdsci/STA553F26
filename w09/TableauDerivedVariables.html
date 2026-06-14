@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+  <title>Tableau Derived Variables & Functions – Summary</title>
+  <style>
+    /* ----- GLOBAL RESET & VARIABLES ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --purple-deep: #6E3061;
+      --purple-light: #8e4b7e;
+      --bg-light: #f8f2f6;
+      --surface-light: #ffffff;
+      --text-primary-light: #1e1e1e;
+      --text-secondary-light: #3a2e38;
+      --border-light: #ddd0da;
+      --card-shadow-light: 0 8px 20px rgba(110, 48, 97, 0.08);
+      --check-bg-light: #f1e6ef;
+      --check-border-light: #b190aa;
+
+      --bg-dark: #2b1e26;
+      --surface-dark: #3d2c37;
+      --text-primary-dark: #f3eaf0;
+      --text-secondary-dark: #d6c2d1;
+      --border-dark: #5c4455;
+      --card-shadow-dark: 0 8px 20px rgba(0,0,0,0.4);
+      --check-bg-dark: #4e3a46;
+      --check-border-dark: #826678;
+
+      --font-sans: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace;
+      --radius-card: 18px;
+      --radius-inner: 14px;
+      --transition: 0.2s ease;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-light);
+      color: var(--text-primary-light);
+      margin: 0;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-primary-dark);
+    }
+
+    /* ----- MAIN CONTAINER (PRINT WIDTH CONTROL) ----- */
+    .document-wrapper {
+      max-width: 1200px;
+      width: 100%;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* ----- HEADER & FOOTER ----- */
+    .page-header, .page-footer {
+      background: var(--purple-deep);
+      color: #ffffff;
+      border-radius: 24px;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 6px 18px rgba(110, 48, 97, 0.3);
+      transition: background 0.3s;
+    }
+
+    .page-header-h1{
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-right: 1rem;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        text-align: center;
+    } 
+      
+    body.dark .page-header,
+    body.dark .page-footer {
+      background: #4a2540;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    }
+
+    .header-content {
+      /*display: flex; */
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .main-title {
+      font-size: 2.0rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-right: 1rem;
+      color: white;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+     text-align: center;
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      font-weight: 400;
+      opacity: 0.9;
+      background: rgba(255,255,255,0.15);
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      backdrop-filter: blur(4px);
+      text-align: center;
+    
+    }
+
+    .footer-content {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+
+    .copyright {
+      font-weight: 400;
+      opacity: 0.9;
+    }
+
+    .site-meter {
+      background: rgba(255,255,255,0.15);
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* ----- TOOLBAR (DARK/LIGHT + PRINT) ----- */
+    .toolbar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .theme-toggle, .print-btn {
+      background: var(--surface-light);
+      border: 1px solid var(--border-light);
+      color: var(--text-primary-light);
+      padding: 0.6rem 1.3rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all var(--transition);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      background: white;
+    }
+
+    body.dark .theme-toggle,
+    body.dark .print-btn {
+      background: var(--surface-dark);
+      border-color: var(--border-dark);
+      color: var(--text-primary-dark);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .theme-toggle:hover, .print-btn:hover {
+      background: #f1e6ef;
+      border-color: #6E3061;
+    }
+
+    body.dark .theme-toggle:hover,
+    body.dark .print-btn:hover {
+      background: #5a3f50;
+      border-color: #b3829e;
+    }
+
+    /* ----- CARDS GRID ----- */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--surface-light);
+      border-radius: var(--radius-card);
+      padding: 1.5rem 1.5rem 1.2rem;
+      box-shadow: var(--card-shadow-light);
+      transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+    }
+
+    body.dark .card {
+      background: var(--surface-dark);
+      border-color: var(--border-dark);
+      box-shadow: var(--card-shadow-dark);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 24px rgba(110, 48, 97, 0.12);
+    }
+
+    .card h2 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--purple-deep);
+      border-left: 6px solid var(--purple-deep);
+      padding-left: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    body.dark .card h2 {
+      color: #dba7cc;
+      border-left-color: #dba7cc;
+    }
+
+    .step-list, .function-list {
+      list-style: none;
+      margin-top: 0.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    /* ----- CHECKBOX ITEMS ----- */
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.7rem;
+      font-size: 0.98rem;
+      line-height: 1.45;
+      color: var(--text-secondary-light);
+      transition: color 0.2s;
+    }
+
+    body.dark .check-item {
+      color: var(--text-secondary-dark);
+    }
+
+    .check-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      margin-top: 0.15rem;
+      border: 2px solid var(--check-border-light);
+      border-radius: 6px;
+      background: var(--check-bg-light);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    body.dark .check-item input[type="checkbox"] {
+      border-color: var(--check-border-dark);
+      background: var(--check-bg-dark);
+    }
+
+    .check-item input[type="checkbox"]:checked {
+      background: var(--purple-deep);
+      border-color: var(--purple-deep);
+    }
+
+    body.dark .check-item input[type="checkbox"]:checked {
+      background: #b873a0;
+      border-color: #b873a0;
+    }
+
+    .check-item input[type="checkbox"]::after {
+      content: "";
+      display: block;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      opacity: 0;
+      margin-top: -2px;
+    }
+
+    .check-item input[type="checkbox"]:checked::after {
+      opacity: 1;
+    }
+
+    .code-inline {
+      background: #f3e6f0;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      color: #4a2040;
+      font-weight: 500;
+      display: inline-block;
+      margin: 0.1rem 0;
+    }
+
+    body.dark .code-inline {
+      background: #4b3845;
+      color: #f1d7e8;
+    }
+
+    .function-name {
+      font-weight: 700;
+      color: #6E3061;
+    }
+
+    body.dark .function-name {
+      color: #e2b4d3;
+    }
+
+    hr {
+      margin: 0.8rem 0 0.5rem;
+      border: 0.5px solid var(--border-light);
+    }
+
+    body.dark hr {
+      border-color: var(--border-dark);
+    }
+
+    .small-note {
+      font-size: 0.8rem;
+      font-style: italic;
+      margin-top: 0.3rem;
+    }
+
+    /* ----- A3 / LETTER PRINT SUPPORT ----- */
+    @media print {
+      body {
+        background: white !important;
+        padding: 0.3in;
+        color: black;
+      }
+      body.dark {
+        background: white !important;
+        color: black;
+      }
+      .toolbar {
+        display: none;
+      }
+      .page-header, .page-footer {
+        background: #6E3061 !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        break-inside: avoid;
+        background: white !important;
+      }
+      body.dark .card {
+        background: white !important;
+        color: black;
+      }
+      .check-item input[type="checkbox"] {
+        -webkit-appearance: checkbox;
+        appearance: checkbox;
+        width: auto;
+        height: auto;
+        border: none;
+        background: transparent;
+      }
+      .main-title, .subtitle {
+        color: white !important;
+      }
+      .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      /* A3 wide support */
+      @page {
+        size: A3 landscape;
+        margin: 1.5cm;
+      }
+      /* Also supports letter */
+      @page letter {
+        size: letter;
+      }
+    }
+
+    /* A3 explicit class usage if needed */
+    .page-a3 .cards-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 700px) {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="document-wrapper">
+    <!-- HEADER -->
+    <header class="page-header">
+        <h1 class="page-header-h1">STA 553 DATA VISUALIZATION</h1>
+      <div class="header-content">
+        <h1 class="main-title">📊 Tableau Derived Variables & Built-in Functions </h1>
+        <center><span class="subtitle">Tableau · Step-by-Step Reference</span></center>
+      </div>
+    </header>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <button class="theme-toggle" id="themeToggle" aria-label="Switch dark/light mode">
+        <span id="themeIcon">🌙</span> <span id="themeLabel">Dark Mode</span>
+      </button>
+      <button class="print-btn" id="printButton" aria-label="Print or save as PDF">
+        🖨️ Print / PDF
+      </button>
+    </div>
+
+    <!-- CARDS: Derived Variables & Functions -->
+    <div class="cards-grid">
+      
+      <!-- CARD 1: Fundamental Steps for Derived Variables -->
+      <div class="card">
+        <h2>🧱 1. Creating Calculated Fields</h2>
+        <ul class="step-list">
+          <li class="check-item"><input type="checkbox" id="c1"><label for="c1"><span class="function-name">Open editor:</span> Right-click Data pane → <span class="code-inline">Create Calculated Field...</span></label></li>
+          <li class="check-item"><input type="checkbox" id="c2"><label for="c2"><span class="function-name">Name it clearly</span> (e.g., Profit Ratio)</label></li>
+          <li class="check-item"><input type="checkbox" id="c3"><label for="c3"><span class="function-name">Row-level:</span> <span class="code-inline">[Sales] - [Cost]</span></label></li>
+          <li class="check-item"><input type="checkbox" id="c4"><label for="c4"><span class="function-name">Aggregate:</span> <span class="code-inline">SUM([Sales])/SUM([Quantity])</span></label></li>
+          <li class="check-item"><input type="checkbox" id="c5"><label for="c5">Click Apply / OK. New <span class="code-inline">=#</span> field appears.</label></li>
+        </ul>
+        <hr>
+        <div class="small-note">✅ Validate syntax with editor hints.</div>
+      </div>
+
+      <!-- CARD 2: Ad-Hoc & Quick Calcs -->
+      <div class="card">
+        <h2>⚡ 2. Ad-Hoc / Quick Calculations</h2>
+        <ul class="step-list">
+          <li class="check-item"><input type="checkbox" id="c6"><label for="c6">Double-click pill on shelf to edit inline.</label></li>
+          <li class="check-item"><input type="checkbox" id="c7"><label for="c7">Type <span class="code-inline">SUM([Sales])/1000</span> → Enter.</label></li>
+          <li class="check-item"><input type="checkbox" id="c8"><label for="c8">Drag temporary pill to Data pane to save permanently.</label></li>
+          <li class="check-item"><input type="checkbox" id="c9"><label for="c9"><span class="function-name">Quick table calc:</span> Right-click pill → Quick Table Calculation.</label></li>
+        </ul>
+      </div>
+
+      <!-- CARD 3: Groups, Sets, Bins, Parameters -->
+      <div class="card">
+        <h2>📌 3. Groups, Sets, Bins & Parameters</h2>
+        <ul class="step-list">
+          <li class="check-item"><input type="checkbox" id="c10"><label for="c10"><span class="function-name">Group:</span> Right-click dimension → Create → Group (merge members).</label></li>
+          <li class="check-item"><input type="checkbox" id="c11"><label for="c11"><span class="function-name">Set:</span> Right-click → Create Set (dynamic/fixed subset).</label></li>
+          <li class="check-item"><input type="checkbox" id="c12"><label for="c12"><span class="function-name">Bin:</span> Right-click measure → Create → Bins (numeric buckets).</label></li>
+          <li class="check-item"><input type="checkbox" id="c13"><label for="c13"><span class="function-name">Parameter:</span> Right-click Data pane → Create Parameter (dynamic input).</label></li>
+        </ul>
+      </div>
+
+      <!-- CARD 4: Logical Functions -->
+      <div class="card">
+        <h2>🔀 Logical Functions</h2>
+        <ul class="function-list">
+          <li class="check-item"><input type="checkbox" id="f1"><label for="f1"><span class="function-name">IF...THEN...ELSE...END</span> – conditional branching.</label></li>
+          <li class="check-item"><input type="checkbox" id="f2"><label for="f2"><span class="function-name">IIF(test, then, else)</span> – inline conditional.</label></li>
+          <li class="check-item"><input type="checkbox" id="f3"><label for="f3"><span class="function-name">CASE [field] WHEN...</span> – multiple equality.</label></li>
+          <li class="check-item"><input type="checkbox" id="f4"><label for="f4"><span class="function-name">IFNULL(expr1, expr2)</span> / <span class="function-name">ISNULL()</span></label></li>
+          <li class="check-item"><input type="checkbox" id="f5"><label for="f5"><span class="function-name">ZN(measure)</span> – null → 0 (numeric).</label></li>
+        </ul>
+      </div>
+
+      <!-- CARD 5: String Functions -->
+      <div class="card">
+        <h2>🔤 String Functions</h2>
+        <ul class="function-list">
+          <li class="check-item"><input type="checkbox" id="f6"><label for="f6"><span class="function-name">UPPER() / LOWER()</span> – case change.</label></li>
+          <li class="check-item"><input type="checkbox" id="f7"><label for="f7"><span class="function-name">LEFT(), RIGHT(), MID()</span> – substrings.</label></li>
+          <li class="check-item"><input type="checkbox" id="f8"><label for="f8"><span class="function-name">SPLIT(string, delimiter, token)</span> – powerful splitter.</label></li>
+          <li class="check-item"><input type="checkbox" id="f9"><label for="f9"><span class="function-name">TRIM() / LEN() / CONTAINS()</span></label></li>
+          <li class="check-item"><input type="checkbox" id="f10"><label for="f10"><span class="function-name">REPLACE(string, find, replace)</span></label></li>
+        </ul>
+      </div>
+
+      <!-- CARD 6: Date Functions -->
+      <div class="card">
+        <h2>📅 Date Functions</h2>
+        <ul class="function-list">
+          <li class="check-item"><input type="checkbox" id="f11"><label for="f11"><span class="function-name">DATEPART('year', date)</span> – integer part.</label></li>
+          <li class="check-item"><input type="checkbox" id="f12"><label for="f12"><span class="function-name">DATENAME('month', date)</span> – string name.</label></li>
+          <li class="check-item"><input type="checkbox" id="f13"><label for="f13"><span class="function-name">DATETRUNC('quarter', date)</span> – first day of period.</label></li>
+          <li class="check-item"><input type="checkbox" id="f14"><label for="f14"><span class="function-name">DATEADD('day', 7, date)</span> / <span class="function-name">DATEDIFF()</span></label></li>
+          <li class="check-item"><input type="checkbox" id="f15"><label for="f15"><span class="function-name">TODAY() / NOW()</span> – current date/datetime.</label></li>
+        </ul>
+      </div>
+
+      <!-- CARD 7: Numeric & Type Conversion -->
+      <div class="card">
+        <h2>🔢 Numeric & Conversion</h2>
+        <ul class="function-list">
+          <li class="check-item"><input type="checkbox" id="f16"><label for="f16"><span class="function-name">ABS(), ROUND(), FLOOR(), CEILING()</span></label></li>
+          <li class="check-item"><input type="checkbox" id="f17"><label for="f17"><span class="function-name">ZN()</span> – null to zero.</label></li>
+          <li class="check-item"><input type="checkbox" id="f18"><label for="f18"><span class="function-name">STR(), INT(), FLOAT(), DATE()</span> – type casts.</label></li>
+          <li class="check-item"><input type="checkbox" id="f19"><label for="f19"><span class="function-name">MAKEDATE(year, month, day)</span></label></li>
+        </ul>
+      </div>
+
+      <!-- CARD 8: Table Calculations -->
+      <div class="card">
+        <h2>📈 Table Calculations</h2>
+        <ul class="function-list">
+          <li class="check-item"><input type="checkbox" id="f20"><label for="f20"><span class="function-name">RUNNING_SUM(SUM([Sales]))</span> – running total.</label></li>
+          <li class="check-item"><input type="checkbox" id="f21"><label for="f21"><span class="function-name">TOTAL(SUM([Sales]))</span> – grand total.</label></li>
+          <li class="check-item"><input type="checkbox" id="f22"><label for="f22"><span class="function-name">LOOKUP(SUM([Sales]), -1)</span> – previous row.</label></li>
+          <li class="check-item"><input type="checkbox" id="f23"><label for="f23"><span class="function-name">WINDOW_AVG(..., -2, 0)</span> – moving average.</label></li>
+          <li class="check-item"><input type="checkbox" id="f24"><label for="f24"><span class="function-name">RANK(), RANK_DENSE(), INDEX()</span></label></li>
+        </ul>
+      </div>
+
+      <!-- CARD 9: Row vs Aggregate concept -->
+      <div class="card">
+        <h2>🧠 Row-Level vs Aggregate</h2>
+        <ul class="step-list">
+          <li class="check-item"><input type="checkbox" id="c14"><label for="c14"><span class="function-name">Row-level:</span> computed per row (e.g., <span class="code-inline">[Price]*[Qty]</span>).</label></li>
+          <li class="check-item"><input type="checkbox" id="c15"><label for="c15"><span class="function-name">Aggregate:</span> after grouping (e.g., <span class="code-inline">SUM([Sales])-SUM([Cost])</span>).</label></li>
+          <li class="check-item"><input type="checkbox" id="c16"><label for="c16">Avoid mixing: <span class="code-inline">[Price]*SUM([Qty])</span> ❌</label></li>
+          <li class="check-item"><input type="checkbox" id="c17"><label for="c17">Use <span class="code-inline">SUM([Price]*[Qty])</span> or aggregate both.</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="page-footer">
+        
+        <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+ 
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+        
+    </footer>
+  </div>
+
+  <script>
+    // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();   
+    
+    (function() {
+      // Dark / Light toggle
+      const body = document.body;
+      const toggleBtn = document.getElementById('themeToggle');
+      const themeIcon = document.getElementById('themeIcon');
+      const themeLabel = document.getElementById('themeLabel');
+
+      function setTheme(mode) {
+        if (mode === 'dark') {
+          body.classList.add('dark');
+          if (themeIcon) themeIcon.textContent = '☀️';
+          if (themeLabel) themeLabel.textContent = 'Light Mode';
+          localStorage.setItem('tableauTheme', 'dark');
+        } else {
+          body.classList.remove('dark');
+          if (themeIcon) themeIcon.textContent = '🌙';
+          if (themeLabel) themeLabel.textContent = 'Dark Mode';
+          localStorage.setItem('tableauTheme', 'light');
+        }
+      }
+
+      // load saved preference
+      const saved = localStorage.getItem('tableauTheme');
+      if (saved === 'dark') {
+        setTheme('dark');
+      } else if (saved === 'light') {
+        setTheme('light');
+      } else {
+        // default light
+        setTheme('light');
+      }
+
+      toggleBtn.addEventListener('click', () => {
+        if (body.classList.contains('dark')) {
+          setTheme('light');
+        } else {
+          setTheme('dark');
+        }
+      });
+
+      // Print button triggers browser print dialog (works for PDF)
+      const printBtn = document.getElementById('printButton');
+      printBtn.addEventListener('click', () => {
+        window.print();
+      });
+
+      // Ensure all checkboxes are interactive (no interference)
+      // Also for better accessibility, clicking label toggles checkbox (native behavior)
+      console.log('✅ Tableau reference ready. Use dark/light toggle and print to PDF.');
+    })();
+  </script>
+</body>
+</html>
