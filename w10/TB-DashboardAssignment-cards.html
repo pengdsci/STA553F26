@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Dashboard Design System | 4 Steps to Effective Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CORE COLOR: purple #6E3061 with accessibility contrast */
+        body {
+            background-color: #512d6d;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+            transition: background-color 0.25s ease, color 0.2s ease;
+        }
+
+        /* main container – printable, max-width for readability */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            transition: background 0.2s;
+        }
+
+        /* header area with purple brand */
+        .header {
+            background: #6E3061;
+            padding: 1.0rem 1.0rem;
+            color: white;
+            border-bottom: 4px solid #ffd966;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h2 {
+            font-size: 2.0rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.35rem;
+            opacity: 0.92;
+            font-weight: 500;
+            border-left: 3px solid #ffd966;
+            padding-left: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        /* toolbar: toggle + print + size hints */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            background: #f9f4f7;
+            border-bottom: 1px solid #e2d0dc;
+            align-items: center;
+        }
+
+        .btn {
+            background: white;
+            border: 1px solid #c2a8bd;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2d2a2c;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn:hover {
+            background: #e9dce5;
+            border-color: #6E3061;
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: #6E3061;
+            border-color: #4f2444;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #4f2444;
+        }
+
+        /* CARDS GRID: two per row on desktop, responsive */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.8rem;
+            padding: 2rem 2rem;
+        }
+
+        /* responsive: on narrow screens, single column */
+        @media (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+
+        /* reference card style - enhanced for deeper content */
+        .card {
+            background: #fefcff;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(110,48,97,0.2);
+            transition: all 0.25s ease;
+            border: 1px solid #ecdde6;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px rgba(110,48,97,0.25);
+        }
+
+        .card-header {
+            background: #6E3061;
+            padding: 1.2rem 1.5rem;
+            border-bottom: 3px solid #ffd966;
+            font-weight: 800;
+            font-size: 1.7rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .card-header span {
+            background: rgba(255,255,240,0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: monospace;
+            letter-spacing: 0.3px;
+        }
+        .card-body {
+            padding: 1.5rem 1.6rem 1.8rem;
+            flex: 1;
+        }
+        .insight-box {
+            background: #f5f0f3;
+            padding: 1rem 1.2rem;
+            border-radius: 20px;
+            margin: 0.7rem 0 1rem 0;
+            border-left: 5px solid #6E3061;
+            font-size: 0.95rem;
+        }
+        .sub-section {
+            margin: 1.2rem 0 0.8rem 0;
+        }
+        .sub-section h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #6E3061;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        body.dark .sub-section h4 {
+            color: #e2b8d4;
+        }
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-top: 0.85rem;
+            padding-top: 0.65rem;
+            border-top: 1px solid #e9dfe4;
+        }
+        .checklist-item input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #6E3061;
+            margin-top: 0.15rem;
+            flex-shrink: 0;
+        }
+        .checklist-item label {
+            font-size: 0.92rem;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+        .badge {
+            background: #e2d0dc;
+            border-radius: 30px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .pro-tip {
+            background: #6E306110;
+            padding: 0.7rem 1rem;
+            border-radius: 18px;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            font-style: italic;
+            border: 1px solid #eeddff;
+        }
+        footer {
+            background: #f3eaf0;
+            padding: 1.2rem 2rem;
+            font-size: 0.8rem;
+            color: #3f2d38;
+            border-top: 1px solid #e1cfda;
+            /*display: flex; */
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .site-meter {
+            font-family: monospace;
+            background: rgba(110,48,97,0.08);
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+        }
+        .code-inline {
+            font-family: 'Fira Code', monospace;
+            background: #f1eef0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+
+        /* Dark mode overrides */
+        body.dark {
+            background-color: #2c1a27;
+        }
+        body.dark .container {
+            background: #1f1a1d;
+        }
+        body.dark .card {
+            background: #2b2428;
+            border-color: #4d3a44;
+        }
+        body.dark .card-header {
+            background: #6E3061;
+            color: white;
+            border-bottom-color: #ffd966;
+        }
+        body.dark .card-body {
+            color: #efeaed;
+        }
+        body.dark .insight-box {
+            background: #3a2e35;
+            color: #f3e6ef;
+            border-left-color: #e2b8d4;
+        }
+        body.dark .pro-tip {
+            background: #3e2d38;
+            border-color: #6E3061;
+        }
+        body.dark .toolbar {
+            background: #2a2126;
+            border-bottom-color: #4b3942;
+        }
+        body.dark .btn {
+            background: #3f2f37;
+            border-color: #6E3061;
+            color: #f0e3ea;
+        }
+        body.dark .btn-primary {
+            background: #6E3061;
+            color: white;
+        }
+        body.dark footer {
+            background: #2c2228;
+            color: #cfc1ca;
+            border-top-color: #4a3842;
+        }
+        body.dark .badge {
+            background: #4a3842;
+        }
+        body.dark .checklist-item {
+            border-top-color: #4e3a44;
+        }
+        body.dark .code-inline {
+            background: #1e1a1c;
+            color: #e2cfda;
+        }
+
+        /* print styles: A3 & Letter support */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            body.dark .container, .container {
+                background: white;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .toolbar {
+                display: none;
+            }
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #aaa;
+            }
+            .card-header {
+                background: #6E3061 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .checklist-item input {
+                opacity: 1;
+                border: 1px solid black;
+            }
+            footer {
+                background: #f5f5f5;
+                color: black;
+            }
+            .btn, .toolbar .btn {
+                display: none;
+            }
+            .insight-box {
+                background: #f0f0f0;
+                border-left: 3px solid #6E3061;
+            }
+            @page {
+                size: A3;
+            }
+            @page letter {
+                size: letter;
+            }
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+            .card:hover {
+                transform: none;
+            }
+        }
+        @media print and (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        .highlight {
+            font-weight: 700;
+            color: #6E3061;
+        }
+        body.dark .highlight {
+            color: #e2b8d4;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>STA 553 Data Visualization</h1>
+        <h2>📊 Four Steps to Build an Effective Single-page Dashboard</h2>
+        <!--div class="subtitle">✨ Interactive review cards • Deep methodology • Actionable checklists</div-->
+    </div>
+    <div class="toolbar">
+        <button class="btn" id="darkModeToggle" aria-label="Dark/Light mode">🌓 Dark / Light Mode</button>
+        <button class="btn btn-primary" id="printPdfBtn" aria-label="Print as PDF">🖨️ Print to PDF (A3/Letter)</button>
+        <!--span class="badge" style="background:#6E306120;">📄 Supports A3 & Letter via print dialog</span-->
+    </div>
+
+    <!-- Cards grid: 2 cards per row, each card is a comprehensive step (no empty cards) -->
+    <div class="cards-grid">
+        <!-- STEP 1 CARD - enriched -->
+        <div class="card">
+            <div class="card-header">
+                📖 Step 1: Draft Your Data Story
+                <span>🎯 Narrative first</span>
+            </div>
+            <div class="card-body">
+                <div class="insight-box">
+                    💡 <strong>Core concept:</strong> Transform raw data into a compelling, logical narrative. Identify key insights, define context, conflict, and resolution.
+                </div>
+                <div class="sub-section">
+                    <h4>🔍 Deep elaboration</h4>
+                    <p>Begin by exploring interconnected data dimensions. Use exploratory analysis (trends, outliers, correlations). Shape a story arc: <span class="highlight">Situation → Complication → Question → Answer</span>. Prioritize 3-5 critical insights that drive decisions. Create a storyboard with sketches of how insights flow from one chart to another.</p>
+                </div>
+                <div class="sub-section">
+                    <h4>📌 Actionable tactics</h4>
+                    <ul style="margin-left: 1.2rem; margin-top: 0.3rem;">
+                        <li>Conduct stakeholder interviews to define key messages</li>
+                        <li>Write a one-paragraph summary: "Our data shows X, which matters because Y"</li>
+                        <li>Test the narrative with a colleague before building visuals</li>
+                    </ul>
+                </div>
+                <div class="pro-tip">
+                    ✨ <strong>Pro Tip:</strong> Use tools like Miro or pen-and-paper to map the insight hierarchy. Every chart must support the main story, not distract.
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step1_check1">
+                    <label for="step1_check1">✅ Extracted 3–5 primary insights from raw data exploration</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step1_check2">
+                    <label for="step1_check2">✅ Defined a clear narrative arc (beginning, middle, end)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step1_check3">
+                    <label for="step1_check3">✅ Mapped each insight to a potential chart type</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step1_check4">
+                    <label for="step1_check4">✅ Story validated with stakeholders / team members</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2 CARD - enriched with interactivity details -->
+        <div class="card">
+            <div class="card-header">
+                📈 Step 2: Create Interconnected Charts
+                <span>⚡ Dynamic viz</span>
+            </div>
+            <div class="card-body">
+                <div class="insight-box">
+                    🧩 <strong>Interactivity core:</strong> Build individual charts that reflect story fragments, then link them via cross-filtering & brushing.
+                </div>
+                <div class="sub-section">
+                    <h4>🎯 Deep elaboration</h4>
+                    <p>Each chart must answer a specific sub-question. Implement interactions: hover tooltips, click selections, linked highlighting. Use consistent color mapping across all charts so that selecting a category in one chart filters all others. Libraries: D3.js, Plotly, Tableau actions, or Power BI bookmarks.</p>
+                </div>
+                <div class="sub-section">
+                    <h4>⚙️ Technical best practices</h4>
+                    <ul style="margin-left: 1.2rem; margin-top: 0.3rem;">
+                        <li>Add zoom & pan for dense scatter plots / time series</li>
+                        <li>Include clear legends and axis descriptions</li>
+                        <li>Optimize performance for real-time filtering (limit data points if needed)</li>
+                    </ul>
+                </div>
+                <div class="pro-tip">
+                    ✨ <strong>Pro Tip:</strong> Use <span class="code-inline">brushing</span> (selecting a range) and <span class="code-inline">detail-on-demand</span> to reveal deeper insights without clutter.
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step2_check1">
+                    <label for="step2_check1">✅ Each chart supports at least one interactive feature (hover/click)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step2_check2">
+                    <label for="step2_check2">✅ Cross-filtering implemented: selection in one chart updates others</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step2_check3">
+                    <label for="step2_check3">✅ Consistent color palette across all linked charts</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step2_check4">
+                    <label for="step2_check4">✅ Responsive behavior for different screen sizes (tested)</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3 CARD - enriched assembly & controls -->
+        <div class="card">
+            <div class="card-header">
+                🧩 Step 3: Assemble the Dashboard
+                <span>🎛️ Controls & Filters</span>
+            </div>
+            <div class="card-body">
+                <div class="insight-box">
+                    🖥️ <strong>Unified layout:</strong> Combine charts into a cohesive grid, add global filters & interactive controls for self-guided exploration.
+                </div>
+                <div class="sub-section">
+                    <h4>📐 Deep elaboration</h4>
+                    <p>Place the most important chart (key insight) at the top-left or center. Arrange supporting charts around it. Use container padding and white space to avoid clutter. Implement global date range sliders, multi-select dropdowns for categorical dimensions (e.g., region, product line). Ensure reset filters button is present.</p>
+                </div>
+                <div class="sub-section">
+                    <h4>✨ UX & navigation tips</h4>
+                    <ul style="margin-left: 1.2rem; margin-top: 0.3rem;">
+                        <li>Group related filters in a sidebar or top panel</li>
+                        <li>Provide tooltips explaining each filter's effect</li>
+                        <li>Add a search bar for high-cardinality dimensions</li>
+                        <li>Maintain consistent interactive feedback (loading states, highlights)</li>
+                    </ul>
+                </div>
+                <div class="pro-tip">
+                    ✨ <strong>Pro Tip:</strong> Use URL parameters to share filtered dashboard states, enabling collaborative analysis.
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step3_check1">
+                    <label for="step3_check1">✅ Charts arranged in logical visual hierarchy (primary insight prominent)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step3_check2">
+                    <label for="step3_check2">✅ Global filters (time, categories, metrics) fully functional</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step3_check3">
+                    <label for="step3_check3">✅ Reset / clear filters button available for viewers</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step3_check4">
+                    <label for="step3_check4">✅ Dashboard layout tested on different viewport sizes</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4 CARD - visual design & clarity enriched -->
+        <div class="card">
+            <div class="card-header">
+                🎨 Step 4: Apply Visual Design Principles
+                <span>✨ Clarity & Color</span>
+            </div>
+            <div class="card-body">
+                <div class="insight-box">
+                    🖌️ <strong>Best practices:</strong> Review charts & final dashboard for color contrast, labeling, typography, accessibility, and minimal chart junk.
+                </div>
+                <div class="sub-section">
+                    <h4>🌈 Deep elaboration</h4>
+                    <p>Select colorblind-friendly palettes (ColorBrewer, viridis). Ensure sufficient contrast ratio (4.5:1 for text). Use consistent font families (sans-serif for readability). Avoid 3D effects, excessive gridlines, and redundant labels. Provide alt text for screen readers and ensure logical tab order for interactive elements.</p>
+                </div>
+                <div class="sub-section">
+                    <h4>📏 Accessibility & polish</h4>
+                    <ul style="margin-left: 1.2rem; margin-top: 0.3rem;">
+                        <li>Test in grayscale mode to verify pattern differentiation</li>
+                        <li>Add data labels only where necessary to reduce cognitive load</li>
+                        <li>Ensure all axes are clearly labeled with units of measurement</li>
+                    </ul>
+                </div>
+                <div class="pro-tip">
+                    ✨ <strong>Pro Tip:</strong> Use the "ink-to-data ratio" principle: eliminate non-essential decorations, focus on the message.
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step4_check1">
+                    <label for="step4_check1">✅ Color palette accessible (tested with simulators: protanopia/deuteranopia)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step4_check2">
+                    <label for="step4_check2">✅ All titles, axis labels, legends clear and legible</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step4_check3">
+                    <label for="step4_check3">✅ No redundant or distracting elements (chart junk removed)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step4_check4">
+                    <label for="step4_check4">✅ Typography consistent and supports readability (size, weight)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="step4_check5">
+                    <label for="step4_check5">✅ Sufficient whitespace and visual hierarchy established</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+              <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+ 
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+    
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+        
+ 
+        </footer>
+    </div>
+
+    
+    <script>
+         // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();  
+                 
+    (function() {
+        // Dark mode toggle with local storage
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const htmlBody = document.body;
+        
+        function setDarkMode(isDark) {
+            if (isDark) {
+                htmlBody.classList.add('dark');
+                localStorage.setItem('dashboardDarkMode', 'enabled');
+            } else {
+                htmlBody.classList.remove('dark');
+                localStorage.setItem('dashboardDarkMode', null);
+            }
+        }
+        
+        const storedPref = localStorage.getItem('dashboardDarkMode');
+        if (storedPref === 'enabled') {
+            setDarkMode(true);
+        } else {
+            setDarkMode(false);
+        }
+        
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', () => {
+                const isCurrentlyDark = htmlBody.classList.contains('dark');
+                setDarkMode(!isCurrentlyDark);
+            });
+        }
+        
+        // Print to PDF (A3 and Letter supported via print dialog)
+        const printBtn = document.getElementById('printPdfBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', () => {
+                window.print();
+            });
+        }
+        
+        // Persistent checkboxes: store state in localStorage
+        const allCheckboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+        function storeCheckboxState() {
+            const states = {};
+            allCheckboxes.forEach(cb => {
+                states[cb.id] = cb.checked;
+            });
+            localStorage.setItem('dashboardChecklistState', JSON.stringify(states));
+        }
+        
+        function loadCheckboxState() {
+            const saved = localStorage.getItem('dashboardChecklistState');
+            if (saved) {
+                try {
+                    const states = JSON.parse(saved);
+                    allCheckboxes.forEach(cb => {
+                        if (states.hasOwnProperty(cb.id)) {
+                            cb.checked = states[cb.id];
+                        }
+                    });
+                } catch(e) { console.warn(e); }
+            }
+        }
+        
+        loadCheckboxState();
+        allCheckboxes.forEach(cb => {
+            cb.addEventListener('change', storeCheckboxState);
+        });
+        
+        // ensure print color accuracy
+        const printStyle = document.createElement('style');
+        printStyle.textContent = `@media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .card-header { background: #6E3061 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }`;
+        document.head.appendChild(printStyle);
+    })();
+</script>
+</body>
+</html>
