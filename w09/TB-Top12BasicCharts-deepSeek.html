@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau Basic Charts · Detailed Reference Cards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CORE COLOR: purple #6E3061 with accessibility contrast */
+        body {
+            background-color: #512d6d;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+            transition: background-color 0.25s ease, color 0.2s ease;
+        }
+
+        /* main container – printable, max-width for readability */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            transition: background 0.2s;
+        }
+
+        /* header area with purple brand */
+        .header {
+            background: #6E3061;
+            padding: 1.0rem 1.0rem;
+            color: white;
+            border-bottom: 4px solid #ffd966;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h2 {
+            font-size: 2.0rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.35rem;
+            opacity: 0.92;
+            font-weight: 500;
+            border-left: 3px solid #ffd966;
+            padding-left: 1rem;
+            margin-top: 0.25rem;
+            display: inline-block;
+        }
+
+        /* toolbar: toggle + print + size hints */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            background: #f9f4f7;
+            border-bottom: 1px solid #e2d0dc;
+            align-items: center;
+        }
+
+        .btn {
+            background: white;
+            border: 1px solid #c2a8bd;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2d2a2c;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn:hover {
+            background: #e9dce5;
+            border-color: #6E3061;
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: #6E3061;
+            border-color: #4f2444;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #4f2444;
+        }
+
+        /* CARDS GRID: two per row on desktop, responsive */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.8rem;
+            padding: 2rem 2rem;
+        }
+
+        /* responsive: on narrow screens, single column */
+        @media (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+
+        /* reference card style */
+        .card {
+            background: #fefcff;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px #6E3061;
+            transition: all 0.2s;
+            border: 1px solid #ecdde6;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-header {
+            background: #6E3061;
+            padding: 1rem 1.4rem;
+            border-bottom: 2px solid #dbbdce;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .card-header span {
+            background: rgba(255,255,255,0.15);
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: normal;
+            font-family: monospace;
+        }
+        .card-body {
+            padding: 1.3rem 1.4rem 1.6rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-body p {
+            margin-bottom: 0.4rem;
+        }
+        .card-body strong {
+            color: #4a2340;
+        }
+        .formula-block {
+            background: #f5f0f3;
+            padding: 0.9rem;
+            border-radius: 18px;
+            margin: 0.6rem 0;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            text-align: left;
+            border-left: 3px solid #6E3061;
+        }
+        .formula-block ol,
+        .formula-block ul {
+            margin-left: 1.2rem;
+            margin-top: 0.2rem;
+        }
+        .formula-block li {
+            margin-bottom: 0.25rem;
+        }
+
+        .check-row {
+            display: flex;
+            align-items: center;
+            margin-top: auto;
+            gap: 0.7rem;
+            border-top: 1px dashed #e2d0dc;
+            padding-top: 0.8rem;
+            font-size: 0.85rem;
+        }
+        .check-row input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #6E3061;
+            flex-shrink: 0;
+        }
+        .badge {
+            background: #e2d0dc;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-left: 0.3rem;
+            white-space: nowrap;
+        }
+        .tip-box {
+            background: #fff9e6;
+            border-left: 3px solid #ffd966;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            margin-top: 0.4rem;
+            font-size: 0.85rem;
+        }
+        footer {
+            background: #f3eaf0;
+            padding: 1.2rem 2rem;
+            font-size: 0.8rem;
+            color: #3f2d38;
+            border-top: 1px solid #e1cfda;
+            /*display: flex; */
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Dark mode overrides */
+        body.dark {
+            background-color: #2c1a27;
+        }
+        body.dark .container {
+            background: #1f1a1d;
+        }
+        body.dark .card {
+            background: #2b2428;
+            border-color: #4d3a44;
+        }
+        body.dark .card-header {
+            background: #6E3061;
+            color: white;
+            border-bottom-color: #6E3061;
+        }
+        body.dark .card-body {
+            color: #efeaed;
+        }
+        body.dark .card-body strong {
+            color: #e0bcd5;
+        }
+        body.dark .formula-block {
+            background: #3a2e35;
+            color: #f3e6ef;
+            border-left-color: #ffd966;
+        }
+        body.dark .toolbar {
+            background: #2a2126;
+            border-bottom-color: #4b3942;
+        }
+        body.dark .btn {
+            background: #3f2f37;
+            border-color: #6E3061;
+            color: #f0e3ea;
+        }
+        body.dark .btn-primary {
+            background: #6E3061;
+            color: white;
+        }
+        body.dark footer {
+            background: #2c2228;
+            color: #cfc1ca;
+            border-top-color: #4a3842;
+        }
+        body.dark .badge {
+            background: #4a3842;
+        }
+        body.dark .tip-box {
+            background: #2d2520;
+            border-left-color: #ffd966;
+            color: #e8dcc8;
+        }
+
+        /* print styles: A3 & Letter support */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            body.dark .container,
+            .container {
+                background: white;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .toolbar {
+                display: none;
+            }
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+            .check-row input {
+                opacity: 1;
+                border: 1px solid black;
+            }
+            footer {
+                background: #f5f5f5;
+                color: black;
+            }
+            .btn,
+            .toolbar .btn {
+                display: none;
+            }
+            body.dark .card-header,
+            body.dark .card-body {
+                color: black;
+                background: #fff;
+            }
+            body.dark .card-header {
+                background: #6E3061;
+                color: white;
+            }
+            .formula-block {
+                background: #f7f7f7;
+            }
+            @page {
+                size: A3;
+            }
+            @page letter {
+                size: letter;
+            }
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        @media print and (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        .site-meter {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>STA 553 Data Visualization</h1>
+            <h2>📊 Tableau Basic Charts: Complete Step‑by‑Step Reference Cards</h2>
+            <div class="subtitle">Histogram · Density · Bar · Scatter · Box Plot · Pie · Donut · Line · Heat Map · Treemap</div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <button class="btn" id="darkToggle" title="Toggle dark/light mode">🌓 Dark / Light</button>
+            <button class="btn btn-primary" id="printBtn" title="Print or save as PDF">🖨️ Print / PDF</button>
+            <span class="badge" style="font-size:0.8rem;">A3 · Letter ready</span>
+        </div>
+
+        <!-- CARDS GRID -->
+        <div class="cards-grid" id="cardsGrid">
+
+            <!-- Card 1: Histogram (DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    📊 Histogram
+                    <span>Distribution</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> Shows the distribution of a continuous measure by dividing it into bins (intervals). Each bar represents the count of records falling into that bin.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li><strong>Create a bin</strong> for your measure: In the Data pane, right-click the measure (e.g., <em>Sales</em>).</li>
+                            <li>Select <strong>Create &rarr; Bins...</strong></li>
+                            <li>In the dialog, set the <strong>bin size</strong> (Tableau suggests a default; adjust based on your data granularity). Click <strong>OK</strong>. This creates a new dimension like <em>Sales (bin)</em>.</li>
+                            <li><strong>Build the chart:</strong> Drag the newly created <strong>bin dimension</strong> to <strong>Columns</strong>.</li>
+                            <li>Drag the <strong>same measure</strong> (or any measure) to <strong>Rows</strong>. Tableau defaults to <code>SUM()</code>.</li>
+                            <li>Right-click the pill on Rows and change the aggregation to <strong>Measure &rarr; Count</strong> (or <code>CNT()</code>).</li>
+                            <li><strong>Adjust appearance:</strong> On the <strong>Marks</strong> card, use the <strong>Size</strong> slider and drag it fully to the right to remove gaps between bars (making it a true histogram).</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong> Drag a categorical dimension to <strong>Color</strong> on the Marks card to see the distribution split by category.<br>
+                        <span class="badge">Shortcut</span> In <strong>Show Me</strong>, select "Histogram" (requires one measure) — Tableau auto-creates the bin.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="histCheck" aria-label="Reviewed Histogram card"> <label for="histCheck">✅ Reviewed — I understand Histograms</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Density Curve (DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    📈 Density Curve
+                    <span>Smooth distribution</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> A smoothed version of a histogram, showing the probability density function of a continuous variable. The area under the curve sums to 1.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li><strong>Set up a basic histogram first</strong> (see Histogram card above) so you have a measure bin on Columns and <code>CNT()</code> on Rows.</li>
+                            <li><strong>Change mark type to Area:</strong> On the Marks card, change the dropdown from <strong>Automatic/Bar</strong> to <strong>Area</strong>. This creates a filled density shape.</li>
+                            <li><strong>For a true smooth density curve (alternative method):</strong> Drag your continuous measure directly to Columns (no bin).</li>
+                            <li>From the <strong>Analytics pane</strong>, drag <strong>Distribution Band</strong> into the view.</li>
+                            <li>In the dialog that appears, under "Computation," choose:
+                                <ul>
+                                    <li><strong>Percentiles</strong> (shows shaded regions) or</li>
+                                    <li><strong>Probability Density</strong> (smooth curve)</li>
+                                </ul>
+                            </li>
+                            <li>Adjust the shading, line colors, and band percentages in the <strong>Edit</strong> dialog as needed.</li>
+                            <li>Optionally, format the band to show only the outline for a clean density line.</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Note:</strong> There is no native "Density Curve" button in Show Me — manual setup is required for full control over the smoothing.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="densityCheck" aria-label="Reviewed Density card"> <label for="densityCheck">✅ Reviewed — I understand Density Curves</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Bar Chart (DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    📊 Bar Chart
+                    <span>Comparison</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> Compares values across discrete categories. Bars can be vertical (default) or horizontal. Supports grouping, stacking, and sorting.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li><strong>Place dimensions and measures:</strong> Drag a <strong>categorical dimension</strong> (e.g., <em>Region</em>) to <strong>Columns</strong>.</li>
+                            <li>Drag a <strong>measure</strong> (e.g., <em>Sales</em>) to <strong>Rows</strong>. Tableau defaults to vertical bars with <code>SUM(Sales)</code>.</li>
+                            <li><strong>Swap orientation</strong> for horizontal bars: Click the <strong>Swap</strong> icon on the toolbar (or drag pills to opposite axes).</li>
+                            <li><strong>Sort:</strong> Click the sort icon (ascending/descending) on the axis to order bars by value.</li>
+                            <li><strong>Add color:</strong> Drag another dimension to <strong>Color</strong> on the Marks card to create <strong>stacked</strong> or <strong>grouped</strong> bars.</li>
+                            <li><strong>Add labels:</strong> Drag the measure (or any measure) to <strong>Label</strong> on the Marks card to display values on bars.</li>
+                            <li><strong>Adjust spacing:</strong> Use the <strong>Size</strong> slider on the Marks card to control bar width and gap between bars.</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong> To create a <strong>grouped bar chart</strong> (side-by-side), ensure the dimension on Color is placed before or after the Columns dimension appropriately. Use the <strong>Analysis &rarr; Stack Marks</strong> menu to toggle stacking on/off.<br>
+                        <span class="badge">Shortcut</span> With one dimension and one measure selected, choose "Horizontal Bars" or "Stacked Bars" from <strong>Show Me</strong>.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="barCheck" aria-label="Reviewed Bar chart"> <label for="barCheck">✅ Reviewed — I understand Bar Charts</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Scatter Plot (DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    🔵 Scatter Plot
+                    <span>Relationship</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> Displays the relationship between two continuous measures. Each mark represents one record or aggregation. Ideal for identifying correlations, clusters, and outliers.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li><strong>Place measures on axes:</strong> Drag one measure (e.g., <em>Profit</em>) to <strong>Columns</strong>.</li>
+                            <li>Drag another measure (e.g., <em>Sales</em>) to <strong>Rows</strong>. Tableau creates one aggregated mark if no detail dimension is used.</li>
+                            <li><strong>Disaggregate or add detail:</strong> To see every individual record, go to <strong>Analysis &rarr; Aggregate Measures</strong> and <strong>uncheck</strong> it. <em>Better approach:</em> Drag a <strong>unique identifier dimension</strong> (e.g., <em>Customer ID</em>) to <strong>Detail</strong> on the Marks card so each mark represents one entity.</li>
+                            <li><strong>Encode additional dimensions:</strong> Drag a categorical dimension to <strong>Color</strong> to group points by category.</li>
+                            <li>Drag a measure to <strong>Size</strong> to create a bubble scatter plot (varying point sizes).</li>
+                            <li><strong>Add trend line:</strong> From the <strong>Analytics pane</strong>, drag <strong>Trend Line</strong> onto the chart. Choose Linear, Logarithmic, Exponential, or Polynomial in the dialog.</li>
+                            <li>Hover over the trend line to see R-squared and p-value. Right-click to edit or describe the trend model.</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong> Use <strong>Pages</strong> shelf with a date field to animate the scatter plot over time. Add <strong>Reference Lines</strong> from the Analytics pane to mark thresholds.<br>
+                        <span class="badge">Shortcut</span> Select two measures and pick "Scatter Plot" from <strong>Show Me</strong>.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="scatterCheck" aria-label="Reviewed Scatter plot"> <label for="scatterCheck">✅ Reviewed — I understand Scatter Plots</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Box Plot (DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    📦 Box Plot
+                    <span>Quartiles & outliers</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> Also called a box-and-whisker plot. Summarizes distribution using five numbers: minimum, Q1 (25th percentile), median (Q2), Q3 (75th percentile), and maximum. Whiskers extend to 1.5 × IQR; points beyond are outliers.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li><strong>Set up the view:</strong> Drag a <strong>continuous measure</strong> (e.g., <em>Sales</em>) to <strong>Rows</strong>.</li>
+                            <li>Drag a <strong>categorical dimension</strong> (e.g., <em>Region</em>) to <strong>Columns</strong>. (For a single box plot, drag the dimension to <strong>Detail</strong> instead.)</li>
+                            <li><strong>Change to box plot:</strong> On the Marks card, change the mark type dropdown to <strong>Circle</strong> (this is temporary, to give Tableau a mark to work with).</li>
+                            <li>From the <strong>Analytics pane</strong>, drag <strong>Box Plot</strong> onto the view. Drop it onto the <strong>cell</strong> (the plot area). Tableau adds box-and-whisker marks showing median, IQR, and whiskers.</li>
+                            <li><strong>Clean up:</strong> Hide the original circle marks if they still appear by removing the circle mark or using a dual-axis trick to overlay them.</li>
+                            <li><strong>Format:</strong> Right-click the box plot axis or the box itself and choose <strong>Edit Reference Line</strong> to adjust whisker length, colors, fill, and outlier display.</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Important:</strong> Box plots work best when a dimension partitions the data into groups. Without a dimension on Columns or Detail, you get a single summary box for the entire dataset.<br>
+                        <span class="badge">Formula</span> IQR = Q3 − Q1 · Whiskers: Q1−1.5×IQR to Q3+1.5×IQR
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="boxCheck" aria-label="Reviewed Box plot"> <label for="boxCheck">✅ Reviewed — I understand Box Plots</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6: Pie Chart (ENHANCED DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    🥧 Pie Chart
+                    <span>Part-to-whole</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> Shows proportions of a whole as slices of a circle. Each slice represents a category's contribution to the total (360°). Best with fewer than 6 categories for readability.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li>On the <strong>Marks</strong> card, change the mark type dropdown from Automatic to <strong>Pie</strong>.</li>
+                            <li>Drag a <strong>categorical dimension</strong> (e.g., <em>Category</em>) to <strong>Color</strong> on the Marks card. Each slice gets a distinct color from the palette.</li>
+                            <li>Drag a <strong>measure</strong> (e.g., <em>Sales</em>) to <strong>Angle</strong> on the Marks card. Tableau calculates each slice's angle proportionally: <code>(category value / total) × 360°</code>.</li>
+                            <li>Drag the same dimension (or a label-friendly field) to <strong>Label</strong> on the Marks card.</li>
+                            <li>Click <strong>Label</strong> on the Marks card, then check <strong>Show mark labels</strong>. Customize to display:
+                                <ul>
+                                    <li>Category name (from the dimension)</li>
+                                    <li>Value (from the measure)</li>
+                                    <li>Percent of total (right-click measure on Angle &rarr; Quick Table Calculation &rarr; Percent of Total)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Sort slices:</strong> Right-click the dimension on Color and select <strong>Sort</strong>. Sort by the measure descending to order slices from largest to smallest.</li>
+                            <li><strong>Explode slices:</strong> Click on a slice and drag it outward to emphasize a particular category.</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tips:</strong><br>
+                        • Use <strong>Quick Table Calculation &rarr; Percent of Total</strong> on the Angle measure to display percentage labels.<br>
+                        • Avoid pie charts for many categories or precise comparisons — use bar charts instead.<br>
+                        • Combine with <strong>Filter</strong> to show top N categories and group the rest as "Other."<br>
+                        <span class="badge">Shortcut</span> Select 1 dimension + 1 measure, then choose "Pie Chart" from Show Me.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="pieCheck" aria-label="Reviewed Pie chart"> <label for="pieCheck">✅ Reviewed — I understand Pie Charts</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 7: Donut Chart (NEW DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    🍩 Donut Chart
+                    <span>Ring / hole in center</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> A variation of the pie chart with a hollow center. The donut shape improves readability by focusing attention on arc lengths rather than slice angles. The center hole can display a summary metric (e.g., total sales, grand total count).</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li><strong>Create a basic pie chart first:</strong> Follow the Pie Chart steps above. Set Marks to <strong>Pie</strong>, put a dimension on <strong>Color</strong>, and a measure on <strong>Angle</strong>.</li>
+                            <li><strong>Duplicate the measure on Rows</strong> to create a second identical pie chart:
+                                <ul>
+                                    <li>Drag the same measure (e.g., <em>Sales</em>) to <strong>Rows</strong> again, placing it to the right of the existing pill, OR</li>
+                                    <li>Hold <strong>Ctrl</strong> (or <strong>Cmd</strong> on Mac) and drag the existing measure pill on Rows to duplicate it next to itself.</li>
+                                </ul>
+                            </li>
+                            <li>You now have two identical pie charts side by side. On the <strong>second</strong> Marks card (select it from the Rows shelf or the card selector), do the following:
+                                <ul>
+                                    <li><strong>Remove all pills</strong> from Color, Angle, and Label — making it a blank pie.</li>
+                                    <li>Change its mark type to <strong>Circle</strong> (not Pie).</li>
+                                    <li>Drag <code>CNT(1)</code> or <code>MIN(0)</code> to <strong>Size</strong> to create a small dot, OR simply reduce the Size slider until it becomes a small circle in the center.</li>
+                                    <li>Set the circle's <strong>Color</strong> to white (or your background color) to act as the "hole."</li>
+                                </ul>
+                            </li>
+                            <li><strong>Combine into dual axis:</strong> Right-click the second measure pill on the Rows shelf (the one for the circle) and select <strong>Dual Axis</strong>. This overlays the small white circle on top of the pie chart, creating the donut hole.</li>
+                            <li><strong>Adjust the hole size:</strong> On the second Marks card (the circle), adjust the <strong>Size</strong> slider to make the center hole larger or smaller.</li>
+                            <li><strong>Add a label in the center (optional):</strong> Drag a measure (e.g., <em>SUM(Sales)</em>) to <strong>Label</strong> on the circle's Marks card. Format the label to display a summary like total sales in the center of the donut.</li>
+                            <li><strong>Sync axes</strong> if needed: Right-click the right axis and select <strong>Synchronize Axis</strong> to ensure both layers align perfectly.</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Alternative Method:</strong> Some users create donut charts using a calculated field with value 0 placed on Rows as a "dummy" axis, then use dual axis with a circle mark. Another approach is using <strong>floating objects</strong> on a dashboard to place a text box over a pie chart — though this is less precise.<br>
+                        <strong>💡 Design Tip:</strong> The donut's center is perfect for displaying a <strong>KPI summary</strong> like grand total, average, or YoY change. Use bold, large font for impact.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="donutCheck" aria-label="Reviewed Donut chart"> <label for="donutCheck">✅ Reviewed — I understand Donut Charts</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 8: Line Chart / Time Series (DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    📈 Line Chart
+                    <span>Trend over time</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> Shows how a measure changes over a continuous date/time axis. Excellent for identifying trends, seasonality, and anomalies.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li>Drag a <strong>date field</strong> to <strong>Columns</strong>. Ensure it is <strong>continuous</strong> (green pill). If it's blue (discrete), right-click and select "Convert to Continuous."</li>
+                            <li>Drag a <strong>measure</strong> (e.g., <em>Sales</em>) to <strong>Rows</strong>.</li>
+                            <li>On the Marks card, ensure the mark type is set to <strong>Line</strong> (Tableau usually auto-selects this for date + measure).</li>
+                            <li><strong>Add multiple measures:</strong> Drag additional measures to the Rows axis or use <strong>Measure Names/Measure Values</strong> to overlay multiple lines.</li>
+                            <li><strong>Add forecasting:</strong> From the <strong>Analytics pane</strong>, drag <strong>Forecast</strong> onto the view. Tableau automatically generates a forecast with prediction bands.</li>
+                            <li>Right-click the date axis to change the granularity (Day, Week, Month, Quarter, Year) or to use <strong>exact date</strong> vs. <strong>discrete date parts</strong>.</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong> Use <strong>dual axis</strong> to combine a line chart with bars or circles. Drag a second measure to the right side of the Rows axis until you see a dashed line, then release.<br>
+                        <span class="badge">Shortcut</span> With one date and one measure, select "Line (continuous)" from Show Me.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="lineCheck" aria-label="Reviewed Line chart"> <label for="lineCheck">✅ Reviewed — I understand Line Charts</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 9: Heat Map (DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    🔥 Heat Map
+                    <span>Color intensity</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> A grid or matrix where color intensity encodes the magnitude of a measure. Great for spotting patterns across two dimensions.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li>Drag one <strong>dimension</strong> (e.g., <em>Product Category</em>) to <strong>Columns</strong>.</li>
+                            <li>Drag another <strong>dimension</strong> (e.g., <em>Region</em>) to <strong>Rows</strong>. This creates a cross-tab grid.</li>
+                            <li>Drag a <strong>measure</strong> (e.g., <em>Profit</em>) to <strong>Color</strong> on the Marks card. Tableau colors each cell by the measure's value.</li>
+                            <li>On the Marks card, change the mark type dropdown to <strong>Square</strong> to fill the entire cell with color (instead of circles or text).</li>
+                            <li>Adjust the <strong>Size</strong> slider to make squares fill the cell space completely.</li>
+                            <li>Optionally, drag the same measure to <strong>Label</strong> to display the numeric values inside the squares.</li>
+                            <li>Edit the <strong>Color</strong> legend to choose a sequential or diverging color palette (e.g., Red-Green for profit/loss).</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong> Combine with <strong>Quick Table Calculations</strong> (e.g., percent difference, rank) for more advanced heat maps. Use diverging palettes for data with a meaningful midpoint (like zero).
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="heatCheck" aria-label="Reviewed Heat map"> <label for="heatCheck">✅ Reviewed — I understand Heat Maps</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 10: Treemap (DETAILED) -->
+            <div class="card">
+                <div class="card-header">
+                    🟩 Treemap
+                    <span>Hierarchy & size</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> Displays hierarchical data as nested rectangles. The area of each rectangle is proportional to a measure, making it easy to compare parts within a whole, even with many segments.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li>Drag one or two <strong>dimensions</strong> to define the hierarchy. The first dimension creates the largest rectangles; the second nests inside them.</li>
+                            <li>Drag a <strong>measure</strong> (e.g., <em>Sales</em>) to <strong>Size</strong> on the Marks card. Rectangle area becomes proportional to this measure.</li>
+                            <li>On the Marks card, ensure the mark type is <strong>Square</strong>. (Tableau auto-selects this when Size is used.)</li>
+                            <li>Drag a dimension to <strong>Color</strong> to distinguish categories by hue.</li>
+                            <li>Drag dimensions and/or measures to <strong>Label</strong> to display category names and values inside the rectangles.</li>
+                            <li>Use the <strong>Size</strong> slider to adjust the visual weight. The treemap algorithm automatically arranges rectangles for optimal space usage.</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong> Treemaps excel with many categories where bar charts become unwieldy. Use <strong>Quick Table Calculation &rarr; Percent of Total</strong> on the Size measure for proportional comparison.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="treeCheck" aria-label="Reviewed Treemap"> <label for="treeCheck">✅ Reviewed — I understand Treemaps</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 11: Highlight Table (ADDITIONAL CHART) -->
+            <div class="card">
+                <div class="card-header">
+                    📋 Highlight Table
+                    <span>Text + color</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Concept:</strong> A text table enhanced with color encoding. Combines the precision of numbers with the visual cues of a heat map. Ideal for detailed reports where exact values matter.</p>
+                    <div class="formula-block">
+                        <strong>Step‑by‑Step Procedure:</strong>
+                        <ol>
+                            <li>Drag one <strong>dimension</strong> (e.g., <em>Product</em>) to <strong>Rows</strong>.</li>
+                            <li>Drag another <strong>dimension</strong> (e.g., <em>Region</em>) to <strong>Columns</strong>.</li>
+                            <li>Drag a <strong>measure</strong> (e.g., <em>Sales</em>) to <strong>Text/Label</strong> on the Marks card. Tableau displays the number in each cell.</li>
+                            <li>Drag the same measure to <strong>Color</strong> on the Marks card. The cell background is now color-encoded by value.</li>
+                            <li>Ensure mark type is <strong>Square</strong> so the color fills each cell entirely.</li>
+                            <li>Format the text (font, size, alignment) by clicking <strong>Label</strong> on the Marks card.</li>
+                            <li>Edit the <strong>Color</strong> legend to choose an appropriate palette (sequential for counts, diverging for profit/loss).</li>
+                        </ol>
+                    </div>
+                    <div class="tip-box">
+                        <strong>💡 Pro Tip:</strong> Add <strong>Grand Totals</strong> (Analysis &rarr; Totals) for row/column summaries. Use <strong>Borders</strong> and <strong>Shading</strong> formatting to make the table printer-friendly.
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="highlightCheck" aria-label="Reviewed Highlight table"> <label for="highlightCheck">✅ Reviewed — I understand Highlight Tables</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 12: Show Me Cheat Sheet + General Tips -->
+            <div class="card">
+                <div class="card-header">
+                    🧭 Quick Reference
+                    <span>Show Me & tips</span>
+                </div>
+                <div class="card-body">
+                    <p><strong>Show Me Required Fields:</strong></p>
+                    <div class="formula-block" style="text-align:left;">
+                        <ul style="list-style-type: none; padding-left: 0;">
+                            <li>📊 <strong>Bar Chart:</strong> 1+ dimension, 1+ measure</li>
+                            <li>📊 <strong>Histogram:</strong> 1 measure (creates bin auto)</li>
+                            <li>🔵 <strong>Scatter Plot:</strong> 2 measures (optionally 1 dim)</li>
+                            <li>📦 <strong>Box Plot:</strong> 1+ dimension, 1 measure</li>
+                            <li>🥧 <strong>Pie Chart:</strong> 1 dimension, 1 measure</li>
+                            <li>🍩 <strong>Donut Chart:</strong> Manual (dual-axis from pie chart)</li>
+                            <li>📈 <strong>Line Chart:</strong> 1 date, 1+ measure</li>
+                            <li>🔥 <strong>Heat Map:</strong> 1+ dimension, 1 measure</li>
+                            <li>📋 <strong>Highlight Table:</strong> 1+ dimension, 1 measure</li>
+                            <li>🟩 <strong>Treemap:</strong> 1+ dimension, 1 measure</li>
+                        </ul>
+                    </div>
+                    <p><strong>General Workflow Tips:</strong></p>
+                    <div class="formula-block" style="text-align:left;">
+                        <ul>
+                            <li>🟢 <strong>Green pills</strong> = continuous (create axes)</li>
+                            <li>🔵 <strong>Blue pills</strong> = discrete (create headers)</li>
+                            <li>Drag to <strong>Detail</strong> to disaggregate without coloring</li>
+                            <li>Use <strong>Analytics pane</strong> for reference lines, bands, and distributions</li>
+                            <li>Right-click pills for <strong>Quick Table Calculations</strong></li>
+                            <li><strong>Dual Axis:</strong> Right-click second measure on Rows &rarr; Dual Axis</li>
+                            <li><strong>Donut hole trick:</strong> Dual-axis pie + white circle on top</li>
+                        </ul>
+                    </div>
+                    <div class="check-row">
+                        <input type="checkbox" id="showmeCheck" aria-label="Reviewed Quick Reference"> <label for="showmeCheck">✅ Reviewed — I've mastered the basics</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+              <div>
+              <center> 
+                <div class="copyright">
+                  <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+                 <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+                <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+        </div>
+        </footer>
+    </div>
+
+    <script>
+
+ // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();  
+
+        (function() {
+            // Dark/light toggle
+            const darkToggle = document.getElementById('darkToggle');
+            const body = document.body;
+
+            // Check saved preference
+            const savedTheme = localStorage.getItem('tableauCardsTheme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark');
+            }
+
+            darkToggle.addEventListener('click', () => {
+                body.classList.toggle('dark');
+                const isDark = body.classList.contains('dark');
+                localStorage.setItem('tableauCardsTheme', isDark ? 'dark' : 'light');
+            });
+
+            // Print button (triggers browser print dialog)
+            const printBtn = document.getElementById('printBtn');
+            printBtn.addEventListener('click', () => {
+                window.print();
+            });
+
+            // Checkbox state persistence (keeps checks after refresh)
+            const checkboxes = document.querySelectorAll('.check-row input[type="checkbox"]');
+            checkboxes.forEach((cb, index) => {
+                const saved = localStorage.getItem('cardCheck_' + index);
+                if (saved === 'true') {
+                    cb.checked = true;
+                }
+                cb.addEventListener('change', function() {
+                    localStorage.setItem('cardCheck_' + index, this.checked);
+                });
+            });
+
+            console.log('✅ Tableau Detailed Reference Cards ready (12 charts). Use Ctrl+P to print or save as PDF.');
+        })();
+    </script>
+</body>
+</html>
