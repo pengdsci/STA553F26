@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Dashboard Design Hub | Types & Principles</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CSS Variables for light/dark + accessible contrast */
+        :root {
+            --bg-body: #F5F2F7;
+            --surface-card: #FFFFFF;
+            --text-primary: #1E1A2F;
+            --text-secondary: #2D2A3E;
+            --border-light: #E2DCE8;
+            --accent-purple: #6E3061;   /* primary purple */
+            --accent-hover: #541e48;
+            --accent-soft: #f1e6ef;
+            --checkbox-bg: #6E3061;
+            --code-bg: #F8F4FC;
+            --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.03);
+            --footer-text: #4A4458;
+        }
+
+        body.dark {
+            --bg-body: #121212;
+            --surface-card: #1E1E2A;
+            --text-primary: #F0EDF5;
+            --text-secondary: #D9D4E8;
+            --border-light: #33323F;
+            --accent-soft: #2A2536;
+            --code-bg: #2A2536;
+            --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.4);
+            --footer-text: #B9B2CC;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            line-height: 1.45;
+            transition: background 0.2s ease, color 0.2s;
+            padding: 2rem 1.5rem;
+        }
+
+        /* main container with print max-width */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: transparent;
+        }
+
+        /* Header with purple background */
+        .hero-header {
+            background-color: var(--accent-purple);
+            border-radius: 32px;
+            padding: 2rem 2rem;
+            margin-bottom: 2.5rem;
+            color: white;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+
+        .hero-header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+         .hero-header h2 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-header p {
+            font-size: 1.1rem;
+            opacity: 0.92;
+            max-width: 80%;
+            text-align: center;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn-toggle, .print-btn {
+            background: var(--surface-card);
+            border: 1px solid var(--border-light);
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-toggle:hover, .print-btn:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent-purple);
+        }
+
+        /* card grid layout */
+        .section-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin: 1.5rem 0 1rem 0;
+            border-left: 6px solid var(--accent-purple);
+            padding-left: 1rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* card style */
+        .card {
+            background: var(--surface-card);
+            border-radius: 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            transition: transform 0.1s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-header {
+            background: var(--accent-soft);
+            padding: 1rem 1.4rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .card-header h3 {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-bottom: 0.2rem;
+        }
+
+        .card-header p {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .card-content {
+            padding: 1.4rem;
+            flex: 1;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .checklist-item input {
+            margin-top: 3px;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checklist-item label {
+            cursor: pointer;
+            line-height: 1.4;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border-color: var(--border-light);
+        }
+
+        .badge-mini {
+            display: inline-block;
+            background: rgba(110, 48, 97, 0.12);
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-bottom: 0.8rem;
+        }
+
+        /* footer purple strip */
+        .footer {
+            margin-top: 3rem;
+            background-color: var(--accent-purple);
+            border-radius: 28px;
+            padding: 1.5rem 2rem;
+            color: #FFFAFF;
+            /*display: flex; */
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+        .footer a {
+            color: #FFE5F2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .site-meter {
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* Print styles for A3, Letter, correct sizing */
+        @media print {
+            body {
+                background: white;
+                padding: 0.2in;
+                color: black;
+            }
+            body.dark {
+                --surface-card: white;
+                --text-primary: black;
+                --border-light: #ccc;
+                background: white;
+                color: black;
+            }
+            .hero-header {
+                background: #6E3061 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                color: white;
+            }
+            .toolbar {
+                display: none;
+            }
+            .btn-toggle, .print-btn {
+                display: none;
+            }
+            .footer {
+                background: #6E3061 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                color: white;
+            }
+            .card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 1px solid #ccc;
+                box-shadow: none;
+            }
+            .checklist-item input {
+                border: 1px solid #aaa;
+                accent-color: #6E3061;
+            }
+            body, .container {
+                max-width: 100%;
+            }
+            @page {
+                size: A3;
+                margin: 1.2cm;
+            }
+            /* letter support via CSS + manual class */
+            body.letter-print-mode {
+                padding: 0;
+            }
+        }
+
+        /* additional print size control: we add class letter-print via script */
+        .page-size-control {
+            display: flex;
+            gap: 12px;
+            margin-left: auto;
+        }
+        .size-btn {
+            background: var(--surface-card);
+            border: 1px solid var(--border-light);
+            padding: 0.4rem 0.9rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+        .size-btn.active {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        /* responsiveness */
+        @media (max-width: 720px) {
+            .hero-header p {
+                max-width: 100%;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* tooltip / gestalt touch */
+        .info-note {
+            background: var(--accent-soft);
+            border-radius: 16px;
+            padding: 0.7rem;
+            font-size: 0.75rem;
+            margin-top: 1rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- HEADER section with purple background + title/subtitle -->
+    <div class="hero-header">
+        <h1>STA 553 Data Visualization</h1>
+        <h2>📊 Dashboard Design Atlas</h2>
+        <!--p>Strategic · Analytical · Operational · Tactical — plus design principles from cognitive science.<br>
+        Transform raw data into actionable insights.</p-->
+    </div>
+
+    <!-- Toolbar: Dark/light toggle + Print + page size (A3/Letter) -->
+    <div class="toolbar">
+        <button class="btn-toggle" id="darkModeToggle" aria-label="Dark mode toggle">🌓 Dark / Light</button>
+        <!--div class="page-size-control">
+            <span style="font-size:0.8rem; align-self:center;">📄 PDF size:</span>
+            <button class="size-btn active" data-size="a3">A3</button>
+            <button class="size-btn" data-size="letter">Letter</button>
+        </div-->
+        <button class="print-btn" id="printPDFBtn">🖨️ Print / Save as PDF</button>
+    </div>
+
+    <!-- ========= BLOCK 1: DASHBOARD TYPES (4 cards) ========= -->
+    <div class="section-title">📌 1. Dashboard Types (by function)</div>
+    <div class="cards-grid">
+        <!-- Strategic Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🏢 Strategic Dashboard</h3>
+                <p>Long‑term health · C‑Suite & Board</p>
+            </div>
+            <div class="card-content">
+                <div class="badge-mini">🎯 High‑level KPIs / KRIs</div>
+                <div class="checklist-item"><input type="checkbox" id="strat1"> <label for="strat1">✔️ Monitor organizational goals / OKRs</label></div>
+                <div class="checklist-item"><input type="checkbox" id="strat2"> <label for="strat2">✔️ Static timeframe (quarter/year)</label></div>
+                <div class="checklist-item"><input type="checkbox" id="strat3"> <label for="strat3">✔️ Clean, minimal, simple filters</label></div>
+                <div class="checklist-item"><input type="checkbox" id="strat4"> <label for="strat4">✔️ CEO view: Revenue, market share, CLTV</label></div>
+                <div class="info-note">✨ Motto: "Are we winning?" – aggregated snapshot.</div>
+            </div>
+        </div>
+        <!-- Analytical Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🔍 Analytical Dashboard</h3>
+                <p>Data exploration · Trends & predictions</p>
+            </div>
+            <div class="card-content">
+                <div class="badge-mini">📈 Granular · High interactivity</div>
+                <div class="checklist-item"><input type="checkbox" id="anal1"> <label for="anal1">🔎 Drill‑downs & what‑if scenarios</label></div>
+                <div class="checklist-item"><input type="checkbox" id="anal2"> <label for="anal2">📊 Advanced charts: scatter, box‑plot, heatmaps</label></div>
+                <div class="checklist-item"><input type="checkbox" id="anal3"> <label for="anal3">⏳ Historical + predictive forecasts</label></div>
+                <div class="checklist-item"><input type="checkbox" id="anal4"> <label for="anal4">🎯 Marketing attribution / cohort retention</label></div>
+                <div class="info-note">🧠 Designed for exploration, not quick glance → “Why is this happening?”</div>
+            </div>
+        </div>
+        <!-- Operational Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>⚡ Operational Dashboard</h3>
+                <p>Real‑time monitoring · Immediate alerts</p>
+            </div>
+            <div class="card-content">
+                <div class="badge-mini">⏱️ Seconds latency · Live feeds</div>
+                <div class="checklist-item"><input type="checkbox" id="ops1"> <label for="ops1">🚨 Visual alerts for SLA breaches (red/green)</label></div>
+                <div class="checklist-item"><input type="checkbox" id="ops2"> <label for="ops2">📡 Server CPU, error rates, queue lengths</label></div>
+                <div class="checklist-item"><input type="checkbox" id="ops3"> <label for="ops3">✅ Minimal interaction: quick status checks</label></div>
+                <div class="checklist-item"><input type="checkbox" id="ops4"> <label for="ops4">🎯 Focus on throughput & system health</label></div>
+                <div class="info-note">🔥 “What needs attention now?” — DevOps & call centers.</div>
+            </div>
+        </div>
+        <!-- Tactical Card (subtype) -->
+        <div class="card">
+            <div class="card-header">
+                <h3>🎯 Tactical Dashboard</h3>
+                <p>Department tracking · Campaign optimization</p>
+            </div>
+            <div class="card-content">
+                <div class="badge-mini">📅 Weekly/daily batches · comparisons</div>
+                <div class="checklist-item"><input type="checkbox" id="tact1"> <label for="tact1">📊 Pipeline deals won/lost by region</label></div>
+                <div class="checklist-item"><input type="checkbox" id="tact2"> <label for="tact2">🔄 Period‑over‑period benchmarks</label></div>
+                <div class="checklist-item"><input type="checkbox" id="tact3"> <label for="tact3">⚙️ Moderate interactivity & drill‑down</label></div>
+                <div class="checklist-item"><input type="checkbox" id="tact4"> <label for="tact4">🏆 Rep performance against quota</label></div>
+                <div class="info-note">📈 Bridges strategic & operational: line‑of‑business managers.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========= BLOCK 2: DESIGN PRINCIPLES — PHASE 1 Foundation ========= -->
+    <div class="section-title">🎨 2. Design Principles — Phase 1: Foundation</div>
+    <div class="cards-grid">
+        <!-- Card: Audience & Goal -->
+        <div class="card">
+            <div class="card-header"><h3>🎯 1. Audience & Goal First</h3><p>Single most important question</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="found1"> <label for="found1">✅ Define WHO (CEO vs analyst vs agent)</label></div>
+                <div class="checklist-item"><input type="checkbox" id="found2"> <label for="found2">✅ Frame 1‑sentence goal: "Head of sales needs to know Q3 pipeline risks"</label></div>
+                <div class="checklist-item"><input type="checkbox" id="found3"> <label for="found3">✅ Align dashboard type accordingly</label></div>
+            </div>
+        </div>
+        <!-- Card: KPIs not just Metrics -->
+        <div class="card">
+            <div class="card-header"><h3>📏 2. Choose KPIs (not metrics)</h3><p>“So what?” test</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="kpi1"> <label for="kpi1">🔹 Metric vs KPI: Conversion rate to trial sign‑up (KPI)</label></div>
+                <div class="checklist-item"><input type="checkbox" id="kpi2"> <label for="kpi2">🔹 Apply "So what?" — remove if no clear action</label></div>
+                <div class="checklist-item"><input type="checkbox" id="kpi3"> <label for="kpi3">🔹 Tie directly to key business objectives</label></div>
+                <div class="info-note">💡 Every KPI must drive decision or insight.</div>
+            </div>
+        </div>
+        <!-- Card: Pick the Right Type -->
+        <div class="card">
+            <div class="card-header"><h3>🧭 3. Pick Dashboard Type</h3><p>Strategic · Analytical · Operational · Tactical</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="type1"> <label for="type1">✅ Based on audience/timeframe choose category</label></div>
+                <div class="checklist-item"><input type="checkbox" id="type2"> <label for="type2">✅ Dictates visual complexity & data granularity</label></div>
+                <div class="info-note">📌 Strategy → simple KPI cards; Analytical → rich complex charts.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========= BLOCK 3: Phase 2 Visual Design Principles ========= -->
+    <div class="section-title">✨ 3. Phase 2: Visual Design & Cognition</div>
+    <div class="cards-grid">
+        <div class="card">
+            <div class="card-header"><h3>👁️ F/Z Pattern & 5‑Second Rule</h3><p>Prime real estate</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="vis1"> <label for="vis1">📍 Top‑Left: Most important KPI</label></div>
+                <div class="checklist-item"><input type="checkbox" id="vis2"> <label for="vis2">⏱️ 5‑second rule: main status obvious immediately</label></div>
+                <div class="checklist-item"><input type="checkbox" id="vis3"> <label for="vis3">📉 Bottom region: trends & breakdowns</label></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>📊 Chart Selection Language</h3><p>Match message to chart</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="chart1"> <label for="chart1">📈 Comparison over time → line/bar chart</label></div>
+                <div class="checklist-item"><input type="checkbox" id="chart2"> <label for="chart2">🥧 Composition → stacked bar / donut (sparingly)</label></div>
+                <div class="checklist-item"><input type="checkbox" id="chart3"> <label for="chart3">🔵 Distribution → histogram, box plot</label></div>
+                <div class="checklist-item"><input type="checkbox" id="chart4"> <label for="chart4">💎 Single value → big number KPI card</label></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>🧹 Clutter & Signal/Noise</h3><p>Whitespace & Gestalt</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="clean1"> <label for="clean1">✂️ Remove heavy gridlines, 3D, shadows</label></div>
+                <div class="checklist-item"><input type="checkbox" id="clean2"> <label for="clean2">📦 Proximity / Similarity / Enclosure (group elements)</label></div>
+                <div class="checklist-item"><input type="checkbox" id="clean3"> <label for="clean3">🎯 Strategic whitespace to separate groups</label></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>🎨 Color with Purpose</h3><p>Accessibility first</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="color1"> <label for="color1">🔴 Red = alert, 🟢 Green = good (with icon backup for colorblind)</label></div>
+                <div class="checklist-item"><input type="checkbox" id="color2"> <label for="color2">🌈 Categorical colors ≤7 distinct hues</label></div>
+                <div class="checklist-item"><input type="checkbox" id="color3"> <label for="color3">⚠️ Don’t rely solely on red/green: use icons (●, ▲) + text</label></div>
+                <div class="checklist-item"><input type="checkbox" id="color4"> <label for="color4">✨ Neutral palette + single accent color (brand)</label></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>🖱️ Layered Interactivity</h3><p>Glance → Filter → Details</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="int1"> <label for="int1">Layer 1: high‑level overview as default</label></div>
+                <div class="checklist-item"><input type="checkbox" id="int2"> <label for="int2">Layer 2: filters/highlight (region click)</label></div>
+                <div class="checklist-item"><input type="checkbox" id="int3"> <label for="int3">Layer 3: tooltip or drill‑through granular report</label></div>
+                <div class="checklist-item"><input type="checkbox" id="int4"> <label for="int4">Consistent controls & date selectors</label></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h3>📋 Type vs Design Summary</h3><p>Strategic vs Analytical vs Operational</p></div>
+            <div class="card-content">
+                <div class="checklist-item"><input type="checkbox" id="sum1"> <label for="sum1">🏛️ Strategic: static, aggregated, clean KPI cards</label></div>
+                <div class="checklist-item"><input type="checkbox" id="sum2"> <label for="sum2">📐 Analytical: very high interaction, complex charts</label></div>
+                <div class="checklist-item"><input type="checkbox" id="sum3"> <label for="sum3">⏲️ Operational: minimal interaction, alerts, live status</label></div>
+                <div class="info-note">“Are we winning?” / “Why?” / “What needs attention?”</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER with copyrights and Site Meter -->
+    <div class="footer">
+                  <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+ 
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+    
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+        
+    </div>
+</div>
+
+<script>
+    // DARK MODE TOGGLE
+    const toggleBtn = document.getElementById('darkModeToggle');
+    toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        // store preference
+        const isDark = document.body.classList.contains('dark');
+        localStorage.setItem('dashDarkMode', isDark);
+    });
+    // load saved dark mode
+    if (localStorage.getItem('dashDarkMode') === 'true') {
+        document.body.classList.add('dark');
+    }
+
+    // PRINT TO PDF with selected page size (A3 or Letter) — proper CSS @page support
+    const printBtn = document.getElementById('printPDFBtn');
+    let currentPageSize = 'a3';   // default A3
+
+    function setPageSizeForPrint(size) {
+        // we dynamically add/remove style rule for @page
+        let styleTag = document.getElementById('dynamicPageSizeStyle');
+        if (!styleTag) {
+            styleTag = document.createElement('style');
+            styleTag.id = 'dynamicPageSizeStyle';
+            document.head.appendChild(styleTag);
+        }
+        if (size === 'a3') {
+            styleTag.textContent = `@media print { @page { size: A3 landscape; margin: 1.2cm; } }`;
+        } else if (size === 'letter') {
+            styleTag.textContent = `@media print { @page { size: Letter; margin: 1cm; } }`;
+        }
+    }
+
+    // update active UI for size buttons
+    const sizeBtns = document.querySelectorAll('.size-btn');
+    sizeBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            sizeBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentPageSize = btn.getAttribute('data-size');
+            setPageSizeForPrint(currentPageSize);
+            // optional slight feedback
+        });
+    });
+    // set default A3 print rule on load
+    setPageSizeForPrint('a3');
+
+    printBtn.addEventListener('click', () => {
+        // ensure page size rule is consistent before printing
+        setPageSizeForPrint(currentPageSize);
+        // small timeout to ensure styles apply
+        window.print();
+    });
+
+    // ensure all checkboxes remain functional and retain state (pure HTML/CSS, they will be interactive)
+    // persist checkbox states optionally using localStorage? not required but provides nice touch
+    function saveCheckboxStates() {
+        const allCheckboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+        const states = {};
+        allCheckboxes.forEach(cb => {
+            states[cb.id] = cb.checked;
+        });
+        localStorage.setItem('dashChecklistState', JSON.stringify(states));
+    }
+    function loadCheckboxStates() {
+        const saved = localStorage.getItem('dashChecklistState');
+        if (!saved) return;
+        try {
+            const states = JSON.parse(saved);
+            for (const [id, isChecked] of Object.entries(states)) {
+                const cb = document.getElementById(id);
+                if (cb) cb.checked = isChecked;
+            }
+        } catch(e) {}
+    }
+    // attach event listeners to save changes
+    function bindCheckboxSaving() {
+        const allCheckboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+        allCheckboxes.forEach(cb => {
+            cb.addEventListener('change', saveCheckboxStates);
+        });
+    }
+    loadCheckboxStates();
+    bindCheckboxSaving();
+
+    // additional fallback for print compatibility (retain background colors)
+    window.matchMedia('print').addListener((mql) => {
+        if (mql.matches) {
+            // background printing enabled via -webkit-print-color-adjust, fine
+        }
+    });
+</script>
+</body>
+</html>
