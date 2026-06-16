@@ -506,12 +506,8 @@
 </div>
 
 <script>
-    
-     // Set current year in copyright
-        document.getElementById('currentYear').textContent = new Date().getFullYear();  
-                    
-    ( 
-    function() {
+            
+    (function() {
         // DARK MODE
         const darkToggle = document.getElementById('darkmodeToggle');
         const bodyEl = document.body;
@@ -559,12 +555,9 @@
         document.getElementById('currentYear').textContent = new Date().getFullYear();  
               
         // update footer year
-        const footerYear = document.querySelector('.copyright');
-        if(footerYear) footerYear.innerHTML = `© ${new Date().getFullYear()} DataViz Pedagogy – Rubric reference: all 4 levels per criterion (Excellent to Unsatisfactory). Based on core visual design principles.`;
-    })
-    
-    
-    ();
+        /*const footerYear = document.querySelector('.copyright');
+        if(footerYear) footerYear.innerHTML = `© ${new Date().getFullYear()} DataViz Pedagogy – Rubric reference: all 4 levels per criterion (Excellent to Unsatisfactory). Based on core visual design principles.`; */
+    }) ();
 </script>
 </body>
 </html>
