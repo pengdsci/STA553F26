@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=yes">
+    <title>Data Viz Grading Cards | Full Rubric Levels</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* CORE COLOR: purple #6E3061 with accessibility contrast */
+        body {
+            background-color: #512d6d;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+            transition: background-color 0.25s ease, color 0.2s ease;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            transition: background 0.2s;
+        }
+
+        .header {
+            background: #6E3061;
+            padding: 1.0rem 1.0rem;
+            color: white;
+            border-bottom: 4px solid #ffd966;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header h2 {
+            font-size: 2.0rem;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.35rem;
+            opacity: 0.92;
+            font-weight: 500;
+            border-left: 3px solid #ffd966;
+            padding-left: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 0.9rem 2rem;
+            background: #f9f4f7;
+            border-bottom: 1px solid #e2d0dc;
+            align-items: center;
+        }
+
+        .btn {
+            background: white;
+            border: 1px solid #c2a8bd;
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2d2a2c;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .btn:hover {
+            background: #e9dce5;
+            border-color: #6E3061;
+            transform: scale(0.97);
+        }
+
+        .btn-primary {
+            background: #6E3061;
+            border-color: #4f2444;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #4f2444;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.8rem;
+            padding: 2rem 2rem;
+        }
+
+        @media (max-width: 760px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            body {
+                padding: 1rem;
+            }
+        }
+
+        .card {
+            background: #fefcff;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(110, 48, 97, 0.18);
+            border: 1px solid #ecdde6;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .card-header {
+            background: #6E3061;
+            padding: 0.9rem 1.4rem;
+            border-bottom: 2px solid #dbbdce;
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+        .card-header span {
+            background: rgba(255,255,240,0.2);
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: normal;
+        }
+        .card-body {
+            padding: 1.2rem 1.4rem 1.4rem;
+            flex: 1;
+        }
+        .rubric-levels {
+            margin: 0.8rem 0 0.6rem;
+        }
+        .level-item {
+            margin-bottom: 0.7rem;
+            border-left: 3px solid #6E3061;
+            padding-left: 0.75rem;
+            background: #fefafc;
+            border-radius: 0 12px 12px 0;
+        }
+        .level-title {
+            font-weight: 800;
+            font-size: 0.85rem;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            margin-bottom: 0.2rem;
+        }
+        .level-desc {
+            font-size: 0.8rem;
+            line-height: 1.35;
+            color: #2c2a2b;
+        }
+        .excellent { color: #1b6b32; background: #e0f3e4; display: inline-block; padding: 0.1rem 0.5rem; border-radius: 20px; }
+        .satisfactory { color: #8a6300; background: #fff0cf; display: inline-block; padding: 0.1rem 0.5rem; border-radius: 20px; }
+        .needs-improvement { color: #b45309; background: #ffe5d9; display: inline-block; padding: 0.1rem 0.5rem; border-radius: 20px; }
+        .unsatisfactory { color: #b91c1c; background: #ffe0e0; display: inline-block; padding: 0.1rem 0.5rem; border-radius: 20px; }
+        
+        .formula-note {
+            background: #f5f0f3;
+            padding: 0.7rem;
+            border-radius: 18px;
+            font-size: 0.85rem;
+            margin: 1rem 0 0.7rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .check-row {
+            display: flex;
+            align-items: center;
+            margin-top: 0.8rem;
+            gap: 0.7rem;
+            border-top: 1px dashed #e2d0dc;
+            padding-top: 0.7rem;
+            font-size: 0.85rem;
+        }
+        .check-row input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #6E3061;
+        }
+        .badge {
+            background: #e2d0dc;
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+        footer {
+            background: #f3eaf0;
+            padding: 1.2rem 2rem;
+            font-size: 0.8rem;
+            color: #3f2d38;
+            border-top: 1px solid #e1cfda;
+            /*display: flex; */
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        .site-meter {
+            font-family: monospace;
+        }
+
+        /* Dark mode overrides */
+        body.dark {
+            background-color: #2c1a27;
+        }
+        body.dark .container {
+            background: #1f1a1d;
+        }
+        body.dark .card {
+            background: #2b2428;
+            border-color: #4d3a44;
+        }
+        body.dark .card-header {
+            background: #6E3061;
+            color: white;
+            border-bottom-color: #6E3061;
+        }
+        body.dark .card-body {
+            color: #efeaed;
+        }
+        body.dark .level-item {
+            background: #342a30;
+            border-left-color: #b97faa;
+        }
+        body.dark .level-desc {
+            color: #e2d8de;
+        }
+        body.dark .formula-note {
+            background: #3a2e35;
+            color: #f3e6ef;
+        }
+        body.dark .toolbar {
+            background: #2a2126;
+            border-bottom-color: #4b3942;
+        }
+        body.dark .btn {
+            background: #3f2f37;
+            border-color: #6E3061;
+            color: #f0e3ea;
+        }
+        body.dark .btn-primary {
+            background: #6E3061;
+            color: white;
+        }
+        body.dark footer {
+            background: #2c2228;
+            color: #cfc1ca;
+            border-top-color: #4a3842;
+        }
+        body.dark .badge {
+            background: #4a3842;
+        }
+        body.dark .excellent { background: #1f5437; color: #d9ffea; }
+        body.dark .satisfactory { background: #755f2b; color: #fff2cf; }
+        body.dark .needs-improvement { background: #9b4a1c; color: #ffebdb; }
+        body.dark .unsatisfactory { background: #a13232; color: #ffe3e3; }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            body.dark .container, .container {
+                background: white;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .toolbar {
+                display: none;
+            }
+            .cards-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #aaa;
+            }
+            .check-row input {
+                opacity: 1;
+                border: 1px solid black;
+            }
+            footer {
+                background: #f5f5f5;
+                color: black;
+            }
+            .btn {
+                display: none;
+            }
+            body.dark .card-header, body.dark .card-body {
+                background: white;
+                color: black;
+            }
+            body.dark .card-header {
+                background: #6E3061;
+                color: white;
+            }
+            body.dark .level-item {
+                background: #f9f9f9;
+                border-left-color: #6E3061;
+            }
+            .level-desc {
+                color: #1f1f1f;
+            }
+            @page {
+                size: A3;
+            }
+            @page letter {
+                size: letter;
+            }
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>STA 553 Data Visualization</h1>
+        <h2>📊 Data Visualization Grading Rubrics</h2>
+    </div>
+
+    <div class="toolbar">
+        <button class="btn" id="printBtn">🖨️ Print to PDF</button>
+        <button class="btn btn-primary" id="darkmodeToggle">🌓 Dark / Light mode</button>
+        <!--span class="badge">✅ all 4 rubric levels per criterion</span-->
+    </div>
+
+    <div class="cards-grid">
+        <!-- CARD 1: Required Figure Components (all 4 levels) -->
+        <div class="card">
+            <div class="card-header">📋 1. Required Components <span>axis/title/legend/source</span></div>
+            <div class="card-body">
+                <div class="rubric-levels">
+                    <div class="level-item"><span class="level-title excellent">Excellent (4) :</span> <span class="level-desc">All components: clear title, axis labels+units, legend (if needed), data source citation, annotations. No omissions.</span></div>
+                    <div class="level-item"><span class="level-title satisfactory">Satisfactory (3) :</span> <span class="level-desc">Missing one minor component (e.g., data source or units on one axis).</span></div>
+                    <div class="level-item"><span class="level-title needs-improvement">Needs Improvement (2) :</span> <span class="level-desc">Missing two components (e.g., no legend and unclear axis labels).</span></div>
+                    <div class="level-item"><span class="level-title unsatisfactory">Unsatisfactory (1) :</span> <span class="level-desc">Missing three or more components, figure uninterpretable without external text.</span></div>
+                </div>
+                <div class="formula-note">📌 Checklist: title, units, source, legend, annotations</div>
+                <div class="check-row"><input type="checkbox" id="c1a"> <label for="c1a">✔️ Title + axis labels with units</label></div>
+                <div class="check-row"><input type="checkbox" id="c1b"> <label for="c1b">📖 Data source & legend present</label></div>
+            </div>
+        </div>
+
+        <!-- CARD 2: Chart Type Appropriateness (4 levels) -->
+        <div class="card">
+            <div class="card-header">📈 2. Chart Type Appropriateness <span>match data-story</span></div>
+            <div class="card-body">
+                <div class="rubric-levels">
+                    <div class="level-item"><span class="level-title excellent">Excellent :</span> <span class="level-desc">Perfectly matches data type & question (time series → line; comparisons → bar; parts of whole → bar instead of pie >3 categories).</span></div>
+                    <div class="level-item"><span class="level-title satisfactory">Satisfactory :</span> <span class="level-desc">Appropriate but slightly better alternative exists (e.g., pie chart for 4 categories).</span></div>
+                    <div class="level-item"><span class="level-title needs-improvement">Needs Improvement :</span> <span class="level-desc">Suboptimal chart type (line chart for categorical X) but still readable.</span></div>
+                    <div class="level-item"><span class="level-title unsatisfactory">Unsatisfactory :</span> <span class="level-desc">Completely wrong chart type (pie chart for time series) → misleading.</span></div>
+                </div>
+                <div class="formula-note">🎯 Best: bars for ranking, lines for trends, avoid pies when >3 slices.</div>
+                <div class="check-row"><input type="checkbox" id="c2a"> <label for="c2a">✅ Chart type aligns with variable types</label></div>
+                <div class="check-row"><input type="checkbox" id="c2b"> <label for="c2b">⚠️ No misleading or overcomplicated visual</label></div>
+            </div>
+        </div>
+
+        <!-- CARD 3: Clarity & Accuracy of Data Encoding -->
+        <div class="card">
+            <div class="card-header">🎯 3. Clarity & Accuracy <span>truthful encoding</span></div>
+            <div class="card-body">
+                <div class="rubric-levels">
+                    <div class="level-item"><span class="level-title excellent">Excellent :</span> <span class="level-desc">All encodings accurate. Bar charts start at zero (or clearly annotated). No distortion.</span></div>
+                    <div class="level-item"><span class="level-title satisfactory">Satisfactory :</span> <span class="level-desc">Minor scaling issue (truncated axis but labeled “zero not shown”), still truthful.</span></div>
+                    <div class="level-item"><span class="level-title needs-improvement">Needs Improvement :</span> <span class="level-desc">Axis truncation without warning or hard-to-read gridlines affecting interpretation.</span></div>
+                    <div class="level-item"><span class="level-title unsatisfactory">Unsatisfactory :</span> <span class="level-desc">Deliberate or accidental distortion (bar charts not starting at zero, misleading dual axes).</span></div>
+                </div>
+                <div class="formula-note">📏 Tufte integrity: start bars at zero, annotate breaks.</div>
+                <div class="check-row"><input type="checkbox" id="c3a"> <label for="c3a">📊 Zero baseline (bars) or explicit break annotation</label></div>
+                <div class="check-row"><input type="checkbox" id="c3b"> <label for="c3b">🔢 Visual mapping matches true data ratios</label></div>
+            </div>
+        </div>
+
+        <!-- CARD 4: Color & Contrast (4 levels) -->
+        <div class="card">
+            <div class="card-header">🎨 4. Color & Contrast <span>accessible + consistent</span></div>
+            <div class="card-body">
+                <div class="rubric-levels">
+                    <div class="level-item"><span class="level-title excellent">Excellent :</span> <span class="level-desc">Colorblind-friendly, high contrast, consistent mapping, no unnecessary colors.</span></div>
+                    <div class="level-item"><span class="level-title satisfactory">Satisfactory :</span> <span class="level-desc">Colors distinguishable but mild contrast issues, or one redundant color.</span></div>
+                    <div class="level-item"><span class="level-title needs-improvement">Needs Improvement :</span> <span class="level-desc">Overly bright/low contrast; color without purpose (rainbow for single variable).</span></div>
+                    <div class="level-item"><span class="level-title unsatisfactory">Unsatisfactory :</span> <span class="level-desc">Relies solely on problematic colors (red-green confusion) or grayscale indistinguishable.</span></div>
+                </div>
+                <div class="formula-note">🌈 Use viridis, Okabe-Ito; check grayscale & WCAG contrast.</div>
+                <div class="check-row"><input type="checkbox" id="c4a"> <label for="c4a">♿ Colorblind-safe & grayscale-friendly</label></div>
+                <div class="check-row"><input type="checkbox" id="c4b"> <label for="c4b">🔁 Same variable → same color across plots</label></div>
+            </div>
+        </div>
+
+        <!-- CARD 5: Typography & Labels -->
+        <div class="card">
+            <div class="card-header">🔤 5. Typography & Labels <span>legible + clean</span></div>
+            <div class="card-body">
+                <div class="rubric-levels">
+                    <div class="level-item"><span class="level-title excellent">Excellent :</span> <span class="level-desc">Sans-serif, all labels horizontal/justifiable rotation, ≥10pt, no clutter.</span></div>
+                    <div class="level-item"><span class="level-title satisfactory">Satisfactory :</span> <span class="level-desc">Minor issues (some labels rotated 90°, slightly small but readable).</span></div>
+                    <div class="level-item"><span class="level-title needs-improvement">Needs Improvement :</span> <span class="level-desc">Overlapping labels, tiny text (<8pt), abbreviations unexplained.</span></div>
+                    <div class="level-item"><span class="level-title unsatisfactory">Unsatisfactory :</span> <span class="level-desc">Illegible text, missing axis labels, unreadable title.</span></div>
+                </div>
+                <div class="formula-note">✍️ Guidelines: title 14-16pt, axis 10-12pt, legend 9-10pt.</div>
+                <div class="check-row"><input type="checkbox" id="c5a"> <label for="c5a">🔠 Labels horizontal/readable, no overlap</label></div>
+                <div class="check-row"><input type="checkbox" id="c5b"> <label for="c5b">📏 Font size adequate for all readers</label></div>
+            </div>
+        </div>
+
+        <!-- CARD 6: Minimizing Non‑Data Ink (Tufte) -->
+        <div class="card">
+            <div class="card-header">✨ 6. Data-Ink Ratio <span>minimalism</span></div>
+            <div class="card-body">
+                <div class="rubric-levels">
+                    <div class="level-item"><span class="level-title excellent">Excellent :</span> <span class="level-desc">Clean: no extraneous gridlines, borders, 3D, gradients, or backgrounds. Data stands out.</span></div>
+                    <div class="level-item"><span class="level-title satisfactory">Satisfactory :</span> <span class="level-desc">Minor excess ink (light default gridlines but not distracting).</span></div>
+                    <div class="level-item"><span class="level-title needs-improvement">Needs Improvement :</span> <span class="level-desc">Heavy gridlines, unnecessary 3D, background images, excessive decorations.</span></div>
+                    <div class="level-item"><span class="level-title unsatisfactory">Unsatisfactory :</span> <span class="level-desc">“Chartjunk” dominates; data is hard to find.</span></div>
+                </div>
+                <div class="formula-note">🧹 Remove 3D, redundant borders, heavy backgrounds.</div>
+                <div class="check-row"><input type="checkbox" id="c6a"> <label for="c6a">📉 No chartjunk, no 3D effects</label></div>
+                <div class="check-row"><input type="checkbox" id="c6b"> <label for="c6b">🧽 Data-ink ratio maximized</label></div>
+            </div>
+        </div>
+
+        <!-- CARD 7: Consistency & Alignment -->
+        <div class="card">
+            <div class="card-header">🔄 7. Consistency & Alignment <span>coherent design</span></div>
+            <div class="card-body">
+                <div class="rubric-levels">
+                    <div class="level-item"><span class="level-title excellent">Excellent :</span> <span class="level-desc">Repeated elements consistent across panels/figures. Strong alignment.</span></div>
+                    <div class="level-item"><span class="level-title satisfactory">Satisfactory :</span> <span class="level-desc">Mostly consistent, one small slip (legend order differs from bars).</span></div>
+                    <div class="level-item"><span class="level-title needs-improvement">Needs Improvement :</span> <span class="level-desc">Noticeable inconsistencies (same variable different colors in multi‑plot).</span></div>
+                    <div class="level-item"><span class="level-title unsatisfactory">Unsatisfactory :</span> <span class="level-desc">Random or chaotic design decisions.</span></div>
+                </div>
+                <div class="formula-note">📐 Unified color palette, aligned axes, consistent symbols.</div>
+                <div class="check-row"><input type="checkbox" id="c7a"> <label for="c7a">⚙️ Colors & symbols match across facets</label></div>
+                <div class="check-row"><input type="checkbox" id="c7b"> <label for="c7b">📊 Axis scales consistent in small multiples</label></div>
+            </div>
+        </div>
+
+        <!-- CARD 8: Accessibility & Annotation -->
+        <div class="card">
+            <div class="card-header">♿ 8. Accessibility & Annotation <span>inclusive + insight</span></div>
+            <div class="card-body">
+                <div class="rubric-levels">
+                    <div class="level-item"><span class="level-title excellent">Excellent :</span> <span class="level-desc">Interpretable in grayscale, includes alt‑text/description, key patterns annotated (e.g., “peak in July”).</span></div>
+                    <div class="level-item"><span class="level-title satisfactory">Satisfactory :</span> <span class="level-desc">Accessible but missing 1–2 annotations or alt‑text.</span></div>
+                    <div class="level-item"><span class="level-title needs-improvement">Needs Improvement :</span> <span class="level-desc">No annotations for key insights; grayscale causes ambiguity.</span></div>
+                    <div class="level-item"><span class="level-title unsatisfactory">Unsatisfactory :</span> <span class="level-desc">Only readable with perfect color vision & extensive prior explanation.</span></div>
+                </div>
+                <div class="formula-note">📢 Add figure captions, pattern callouts, alt text.</div>
+                <div class="check-row"><input type="checkbox" id="c8a"> <label for="c8a">📝 Text annotations highlight main trend/outlier</label></div>
+                <div class="check-row"><input type="checkbox" id="c8b"> <label for="c8b">🌓 Works in grayscale + descriptive alt-text</label></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <center> 
+       <div class="copyright">
+       <p>© 2019-<span id="currentYear"></span>  C. Peng @ West Chester University, USA. All rights reserved.</p>
+            <!-- Copyright Statement -->
+      <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=bdd86ca03bf3709e4523bf44ac939417956604f4'></script>
+      <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/832947/t/5"></script><a href='http://www.freevisitorcounters.com'><img src="img/blackdot.jpg" width="1" height="1"></a><br>
+           <div class="license">
+              <p>📄 Licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener noreferrer"><font color = "red">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</font></a></p>
+              <p>You are free to share and adapt for non-commercial purposes with appropriate credit.</p>
+            </div>
+         </div>
+       </center> 
+    </footer>
+</div>
+
+<script>
+    
+     // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();  
+                    
+    ( 
+    function() {
+        // DARK MODE
+        const darkToggle = document.getElementById('darkmodeToggle');
+        const bodyEl = document.body;
+        const savedTheme = localStorage.getItem('vizThemeFull');
+        if (savedTheme === 'dark') bodyEl.classList.add('dark');
+        else if (savedTheme === 'light') bodyEl.classList.remove('dark');
+        else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            bodyEl.classList.add('dark');
+            localStorage.setItem('vizThemeFull', 'dark');
+        }
+        
+        darkToggle.addEventListener('click', () => {
+            if (bodyEl.classList.contains('dark')) {
+                bodyEl.classList.remove('dark');
+                localStorage.setItem('vizThemeFull', 'light');
+            } else {
+                bodyEl.classList.add('dark');
+                localStorage.setItem('vizThemeFull', 'dark');
+            }
+        });
+        
+        // PRINT BUTTON
+        document.getElementById('printBtn').addEventListener('click', () => window.print());
+        
+        // CHECKBOX PERSISTENCE
+        const allBoxes = document.querySelectorAll('.check-row input[type="checkbox"]');
+        function storeChecklist() {
+            const states = {};
+            allBoxes.forEach(cb => { states[cb.id] = cb.checked; });
+            localStorage.setItem('vizRubricChecklistFull', JSON.stringify(states));
+        }
+        function loadChecklist() {
+            const saved = localStorage.getItem('vizRubricChecklistFull');
+            if (saved) {
+                try {
+                    const states = JSON.parse(saved);
+                    allBoxes.forEach(cb => { if (states.hasOwnProperty(cb.id)) cb.checked = states[cb.id]; });
+                } catch(e) {}
+            }
+        }
+        allBoxes.forEach(cb => cb.addEventListener('change', storeChecklist));
+        loadChecklist();
+        
+     // Set current year in copyright
+        document.getElementById('currentYear').textContent = new Date().getFullYear();  
+              
+        // update footer year
+        const footerYear = document.querySelector('.copyright');
+        if(footerYear) footerYear.innerHTML = `© ${new Date().getFullYear()} DataViz Pedagogy – Rubric reference: all 4 levels per criterion (Excellent to Unsatisfactory). Based on core visual design principles.`;
+    })
+    
+    
+    ();
+</script>
+</body>
+</html>
