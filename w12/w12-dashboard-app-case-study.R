@@ -29,7 +29,8 @@ ui <- dashboardPage(
       tags$a(
         href = "https://pengdsci.github.io/STA553SU26/w12/w12-dashboard-app-case-study.R",
         target = "_blank",
-        icon("github"),
+        #icon("github"),
+        icon("code"),
         " Source Code",
         style = "color: #ffffff; font-size: 16px;"
       )
@@ -40,8 +41,20 @@ ui <- dashboardPage(
       tags$a(
         href = "https://pengdsci.github.io/STA553SU26/w12/w12-ProjectReport.html",
         target = "_blank",
-        icon("github"),
+        #icon("github"),
+        icon("file-alt"),
         " Report",
+        style = "color: #ffffff; font-size: 16px;"
+      )
+    ),
+    # Add source code link to the right side of header
+    tags$li(
+      class = "dropdown",
+      tags$a(
+        href = "https://pengdsci.github.io/STA553SU26/w12/iris0.txt",
+        target = "_blank",
+        icon("database"),
+        " Data Source",
         style = "color: #ffffff; font-size: 16px;"
       )
     )
