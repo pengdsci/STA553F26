@@ -9,6 +9,7 @@
 #
 library(shiny)
 library(shinydashboard)
+library(shinydashboardPlus)
 library(ggplot2)
 library(plotly)
 library(dplyr)
@@ -20,7 +21,31 @@ library(DT)
 ui <- dashboardPage(
   dashboardHeader(
     title = "Iris Data Dashboard",
-    tags$li(class = "dropdown", style = "background-color: #6E3061;")
+    tags$li(class = "dropdown", style = "background-color: #6E3061;"),
+    
+    # Add source code link to the right side of header
+    tags$li(
+      class = "dropdown",
+      tags$a(
+        href = "https://pengdsci.github.io/STA553SU26/w12/w12-dashboard-app-case-study.R",
+        target = "_blank",
+        icon("github"),
+        " Source Code",
+        style = "color: #ffffff; font-size: 16px;"
+      )
+    ),
+    # Add source code link to the right side of header
+    tags$li(
+      class = "dropdown",
+      tags$a(
+        href = "https://pengdsci.github.io/STA553SU26/w12/w12-ProjectReport.html",
+        target = "_blank",
+        icon("github"),
+        " Report",
+        style = "color: #ffffff; font-size: 16px;"
+      )
+    )
+    
   ),
   dashboardSidebar(
     tags$head(
